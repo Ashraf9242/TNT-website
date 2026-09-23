@@ -4,27 +4,26 @@ import {systems} from '../data/content';
 interface Props{lang:Lang}const {lang}=Astro.props;const t=ui[lang];
 const recipient="tntacsevices@tntac.com.om";
 const emailButton=lang==='ar'?'فتح البريد الإلكتروني':'Open email app';
-const emailHint=lang==='ar'?'سيفتح تطبيق البريد الإلكتروني مع جميع تفاصيل طلبك. راجع الرسالة ثم أرسلها.':'Your email app will open with all your request details. Review the email, then send it.';
 ---
 <div class="contact-layout"><aside class="contact-details"><h2>{lang==='ar'?'بيانات التواصل':'Contact details'}</h2><div class="contact-detail"><small>{t.phone}</small><a href={`tel:${contact.tel}`} dir="ltr">{contact.phone} ↗</a></div><div class="contact-detail"><small>{t.email}</small><a href={`mailto:${contact.email}`} dir="ltr">{contact.email}</a></div><div class="contact-detail"><small>Instagram</small><a href={`https://www.instagram.com/${contact.instagram}/`} target="_blank" rel="noopener noreferrer" dir="ltr">@{contact.instagram} ↗</a></div><div class="contact-detail"><small>{t.location}</small><p>{lang==='ar'?'مسقط، سلطنة عُمان':'Oman- Musact'}</p></div></aside>
 <form class="quote-form" id="quote-form" action={`mailto:${recipient}`} novalidate data-lang={lang} data-required={t.required} data-recipient={recipient}>
-<h2>{t.formTitle}</h2><p class="form-hint">{t.formHint} {emailHint}</p><ul class="trust-strip"><li>{lang==='ar'?'تأسست 2018':'Established 2018'}</li><li>{lang==='ar'?'إدارة عمانية':'Omani-led'}</li><li>{lang==='ar'?'عملاء حكوميون ومؤسسات':'Government & enterprise clients'}</li></ul><input type="hidden" name="lang" value={lang}/><div class="honey" aria-hidden="true"><label for="website">Website</label><input id="website" name="website" tabindex="-1" autocomplete="off"/></div>
+<h2>{t.formTitle}</h2><p class="form-hint">{t.formHint}</p><ul class="trust-strip"><li>{lang==='ar'?'تأسست 2018':'Established 2018'}</li><li>{lang==='ar'?'إدارة عمانية':'Omani-led'}</li><li>{lang==='ar'?'عملاء حكوميون ومؤسسات':'Government & enterprise clients'}</li></ul><input type="hidden" name="lang" value={lang}/><div class="honey" aria-hidden="true"><label for="website">Website</label><input id="website" name="website" tabindex="-1" autocomplete="off"/></div>
 <div class="fields">
 {[{name:'name',label:t.name,required:true,auto:'name',max:100},{name:'company',label:t.company,required:false,auto:'organization',max:150},{name:'phone',label:t.phone,required:true,auto:'tel',type:'tel',max:25},{name:'email',label:t.email,required:false,auto:'email',type:'email',max:254},{name:'location',label:t.location,required:true,auto:'street-address',max:250}].map(f=><div class:list={['field',{'full':f.name==='location'}]}><label for={f.name}>{f.label} {f.required?<span aria-hidden="true">*</span>:<small>({t.optional})</small>}</label><input id={f.name} name={f.name} type={(f.type||'text') as 'text'|'tel'|'email'} autocomplete={f.auto} required={f.required} maxlength={f.max} minlength={f.name==='name'?2:undefined} dir={f.type?'ltr':undefined} pattern={f.name==='phone'?'[+0-9٠-٩۰-۹\\(\\) .\\-]{7,25}':undefined} aria-describedby={`${f.name}-error`}/><span class="field-error" id={`${f.name}-error`}></span></div>)}
 <div class="field"><label for="service">{t.service} <span aria-hidden="true">*</span></label><select id="service" name="service" required aria-describedby="service-error"><option value="">{t.choose}</option>{['installation','maintenance','cleaning','contracts'].map((s,i)=><option value={s}>{lang==='ar'?['التركيب','الصيانة','التنظيف','العقود السنوية'][i]:['Installation','Maintenance','Cleaning','Annual contracts'][i]}</option>)}<option value="other">{lang==='ar'?'خدمة أخرى':'Other service'}</option></select><span class="field-error" id="service-error"></span></div>
 <div class="field"><label for="system">{t.system}</label><select id="system" name="system"><option value="unsure">{t.unsure}</option>{systems(lang).map((s,i)=><option value={['package','vrf','duct','cassette','standing','split','window'][i]}>{s}</option>)}<option value="chiller">Chillers</option></select></div>
 <div class="field full"><label for="message">{t.message} <span aria-hidden="true">*</span></label><textarea id="message" name="message" rows="5" required minlength="10" maxlength="3000" aria-describedby="message-hint message-error"></textarea><small id="message-hint" class="form-hint">{lang==='ar'?'من 10 إلى 3000 حرف.':'10–3000 characters.'}</small><span class="field-error" id="message-error"></span></div>
-</div><p class="privacy">{t.privacy}</p><div id="form-status" class="form-status" role="status" aria-live="polite" tabindex="-1"></div><button class="button" type="submit" disabled>{emailButton}<span aria-hidden="true">↗</span></button><noscript><p>{lang==='ar'?'لتعبئة النموذج فعّل JavaScript، أو استخدم الاتصال والبريد المباشر.':'Enable JavaScript to use the form, or contact us by phone or email.'}</p></noscript>
+</div><p class="privacy">{t.privacy}</p><button class="button" type="submit" disabled>{emailButton}<span aria-hidden="true">↗</span></button><noscript><p>{lang==='ar'?'لتعبئة النموذج فعّل JavaScript، أو استخدم الاتصال والبريد المباشر.':'Enable JavaScript to use the form, or contact us by phone or email.'}</p></noscript>
 </form></div>
 <script>
 const form=document.querySelector<HTMLFormElement>('#quote-form');
 if(form){
 const fields=Array.from(form.querySelectorAll<HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement>('.fields input,.fields textarea,.fields select'));
-const status=form.querySelector<HTMLElement>('#form-status')!;const button=form.querySelector<HTMLButtonElement>('button[type=submit]')!;button.disabled=false;
+const button=form.querySelector<HTMLButtonElement>('button[type=submit]')!;button.disabled=false;
 const preselect=new URLSearchParams(location.search).get('service');const service=form.querySelector<HTMLSelectElement>('#service')!;if(preselect&&Array.from(service.options).some(o=>o.value===preselect))service.value=preselect;
 function error(field:typeof fields[number],message:string){field.setAttribute('aria-invalid',String(Boolean(message)));const el=document.getElementById(field.name+'-error');if(el)el.textContent=message;}
 fields.forEach(field=>field.addEventListener('input',()=>error(field,'')));
-form.addEventListener('submit',e=>{e.preventDefault();let invalid=false;status.textContent='';
+form.addEventListener('submit',e=>{e.preventDefault();let invalid=false;
 fields.forEach(field=>{const bad=!field.checkValidity()||(field.required&&!field.value.trim());error(field,bad?form.dataset.required!:'');if(bad&&!invalid){field.focus();invalid=true}});if(invalid)return;
 const ar=form.dataset.lang==='ar';
 const values=Object.fromEntries(fields.map(field=>{
@@ -92,8 +91,6 @@ values.name,
 ]).join('\r\n');
 const subject=(ar?'طلب عرض سعر':'Quote request')+' | '+values.service+' | '+values.name;
 window.location.href='mailto:'+form.dataset.recipient+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
-status.textContent=ar?'راجع الرسالة في تطبيق البريد الإلكتروني ثم أرسلها. إذا لم يفتح التطبيق، تأكد من إعداد تطبيق بريد على جهازك.':'Review the message in your email app, then send it. If the app does not open, check that an email app is configured on your device.';
-status.dataset.state='success';
 });
 }
 </script>
