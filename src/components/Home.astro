@@ -1,0 +1,17 @@
+---
+import {href,ui,pendingCollections,processSteps,type Lang} from '../data/site';
+import {about,why,systems,contracts,text,photoAlt} from '../data/content';
+import HeroBackground from './HeroBackground.astro';
+import Faq from './Faq.astro';import Projects from './Projects.astro';import Photo from './Photo.astro';import Stats from './Stats.astro';import Services from './Services.astro';import Clients from './Clients.astro';
+interface Props{lang:Lang}const {lang}=Astro.props;const ar=lang==='ar';const t=ui[lang];
+---
+<section class="hero"><HeroBackground/><div class="hero-scrim" aria-hidden="true"></div><div class="wrap hero-inner"><h1>{ar?text(1,1):text(1,4)}</h1><p>{ar?text(7,16).replace('تركيب','صيانة'):text(1,3)}</p><p class="hero-trust">{ar?'تأسست في عمان بإدارة عمانية':'Established in Oman with a fully Omani team'}</p></div></section>
+<section class="section"><div class="wrap"><div class="intro-grid"><div><h2>{text(2,ar?0:2)}</h2></div><p class="lead">{about(lang)}</p></div><Stats lang={lang}/></div></section>
+<section class="section white"><div class="wrap systems-layout"><div><h2>{text(9,ar?0:8)}</h2><a class="text-link" href={href(lang,'systems')}>{t.allSystems}<span aria-hidden="true">↗</span></a></div><div class="system-list">{systems(lang).slice(0,3).map((s,i)=><div class="system-row"><span class="system-number">0{i+1}</span><h3>{s}</h3></div>)}<div class="systems-note">{systems(lang).slice(3).join(' / ')}</div></div></div></section>
+<section class="section contract-section"><div class="wrap contract-grid"><div><h2>{ar?contracts.title:'Annual contracts'}</h2><div class="original-arabic" lang="ar" dir="rtl"><p>{contracts.description}</p><ul class="check-list">{contracts.items.map(s=><li>{s}</li>)}</ul></div><div class="actions" style="margin-top:30px"><a class="btn-96" href={href(lang,'contracts')}><span>{t.details}</span></a></div></div><Photo name="workshop" alt={photoAlt('workshop',lang)}/></div></section>
+<section class="section"><div class="wrap"><div class="section-heading"><div><h2>{text(7,ar?14:15)}</h2></div><a class="text-link" href={href(lang,'services')}>{t.allServices}<span aria-hidden="true">↗</span></a></div><Services lang={lang}/></div></section>
+<section class="section soft"><div class="wrap why-grid"><h2>{text(5,ar?6:7)}</h2><div class="why-items">{why(lang).map((s,i)=><div class="why-item"><span>{String(i+1).padStart(2,'0')}</span><p>{s}</p></div>)}</div></div></section>
+<section class="section"><div class="wrap"><div class="section-heading process-heading"><h2>{ar?'من الطلب إلى التنفيذ':'From request to execution'}</h2></div><ol class="process-grid">{processSteps[lang].map((s,i)=><li class="process-step"><span class="process-number">0{i+1}</span><h3>{s.title}</h3><p>{s.text}</p></li>)}</ol></div></section>
+<section class="section soft"><div class="wrap"><div class="section-heading"><div><h2>{text(6,ar?0:1)}</h2></div><a class="text-link" href={href(lang,'clients')}>{t.details}<span aria-hidden="true">↗</span></a></div><Clients limit={10}/></div></section>
+
+<Projects items={pendingCollections.projects} title={ar?'المشاريع':'Projects'}/><Faq items={pendingCollections.faqs} title={ar?'الأسئلة الشائعة':'Frequently asked questions'}/>

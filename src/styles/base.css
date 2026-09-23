@@ -1,0 +1,55 @@
+/* ============================================================
+   Base — reset, document, typography, links, focus.
+   ============================================================ */
+
+* { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 110px;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg);
+  background-image: var(--air);          /* cool-air wash — a soft blue glow from the top */
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  color: var(--ink);
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 17px;
+  line-height: 1.65;
+}
+
+html[lang=ar] body { font-family: 'IBM Plex Sans Arabic', sans-serif; line-height: 1.8; }
+
+a { color: inherit; text-decoration: none; }
+a:hover { color: var(--red-accent); }
+
+button, input, select, textarea { font: inherit; }
+button, a, input, textarea, select { -webkit-tap-highlight-color: transparent; }
+button { cursor: pointer; color: inherit; }
+
+img, video { max-width: 100%; display: block; }
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+  /* surface-colored inner halo keeps the ring visible on any background,
+     including the red CTA button (forced-colors mode falls back to outline) */
+  box-shadow: 0 0 0 2px var(--surface);
+}
+
+h1, h2, h3, p { margin: 0; }
+h1, h2, h3 { font-weight: 600; line-height: 1.35; text-wrap: balance; }
+h1 { font-size: clamp(38px, 4.8vw, 68px); letter-spacing: -.035em; }
+html[lang=ar] h1 { letter-spacing: 0; line-height: 1.5; }
+h2 { font-size: clamp(29px, 3vw, 43px); }
+h3 { font-size: 23px; }
+p { overflow-wrap: break-word; }
+p + p { margin-top: 18px; }

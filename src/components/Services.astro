@@ -1,0 +1,9 @@
+﻿---
+import {services,photoAlt} from '../data/content';
+import {href,ui,type Lang} from '../data/site';
+import Photo from './Photo.astro';
+interface Props{lang:Lang; level?:'h2'|'h3'}
+const {lang,level='h3'}=Astro.props;
+const Heading=level;
+---
+<div class="service-grid">{services(lang).map((s,i)=><article class="service-item"><a class="image-link" href={href(lang,s.slug)} tabindex="-1" aria-hidden="true"><Photo name={s.image} alt={photoAlt(s.image,lang)}/></a><div class="service-top"><span>0{i+1}</span><Heading><a href={href(lang,s.slug)}>{s.title}</a></Heading></div><p>{s.description}</p><a class="text-link" href={href(lang,s.slug)}>{ui[lang].details}<span aria-hidden="true">↗</span></a></article>)}</div>

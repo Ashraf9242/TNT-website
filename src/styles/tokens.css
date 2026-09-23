@@ -1,0 +1,99 @@
+/* ============================================================
+   Design tokens — colors, spacing, radius, elevation, motion.
+   Light defaults on :root; dark overrides on [data-theme=dark].
+
+   Palette direction: cool "cool-air" blue (an HVAC/AC feel). The
+   warm brand red is kept ONLY for primary CTAs (--red); every other
+   accent — links, nav, hairlines, labels — uses the cold --accent.
+   --red-accent is a legacy alias that now resolves to --accent, so
+   existing rules cool down automatically.
+   ============================================================ */
+
+:root {
+  /* Brand */
+  --red: #a83318;          /* solid brand red — CTA fills that carry white text */
+  --red-hover: #85270f;
+  --blue: #86aec2;         /* light muted blue — readable on dark surfaces */
+  --blue-strong: #3d6b80;  /* darker blue — readable on light surfaces (AA) */
+
+  /* Cold accent — lines, links, nav, labels (replaces the old warm red accent) */
+  --accent: #2b57cc;           /* cold royal blue for text/lines on light surfaces (AA) */
+  --accent-hover: #1e46ad;
+  --red-accent: var(--accent); /* legacy alias → cold accent */
+
+  /* Neutrals / surfaces — cool blue-tinted */
+  --ink: #16233b;          /* dark navy text */
+  --muted: #556678;        /* cool gray-blue secondary text (AA on --bg) */
+  --bg: #e9f1fb;           /* cool light-blue page base */
+  --surface: #ffffff;      /* white cards */
+  --soft: #dbe8f7;         /* light blue tint (soft sections, hovers, table heads) */
+  --line: #c6d7ec;         /* cool decorative hairlines */
+  --field-border: #7f95ac; /* input borders — meets 3:1 non-text contrast */
+  --night: #14273e;
+  --panel-dark: #16283f;   /* always-dark panels (contract band, client cells) */
+  --panel-darker: #0f1d30;
+  --divider-dark: #34506f;
+  --on-dark: #fff;
+  --on-dark-muted: #b3c6da;
+
+  /* Theme toggle — a warm "sun" chip by day (the cold accent read as purple
+     against the white header); the cool "night sky" blue stays for dark mode. */
+  --toggle-bg: #f7b733;
+  --toggle-edge: #c2860f;
+
+  /* Semantic */
+  --focus: #16233b;        /* focus ring — high contrast on light surfaces */
+  --success: #478566;
+  --danger: #c63e25;       /* invalid field border */
+  --danger-text: #b42d17;  /* error message text */
+
+  /* Radius */
+  --radius: 4px;           /* base — sharp editorial edge */
+  --radius-lg: 12px;       /* large image/card surfaces only */
+
+  /* Spacing */
+  --space: clamp(20px, 5vw, 80px);
+
+  /* Elevation — cool-tinted shadows */
+  --shadow-sm: 0 1px 2px rgba(22, 35, 59, .06), 0 1px 3px rgba(22, 35, 59, .10);
+  --shadow-md: 0 6px 16px -6px rgba(22, 35, 59, .16), 0 2px 6px -2px rgba(22, 35, 59, .09);
+  --shadow-lg: 0 18px 40px -18px rgba(22, 35, 59, .26);
+
+  /* Motion */
+  --dur-fast: .15s;
+  --dur: .25s;
+  --ease-out: cubic-bezier(.2, .8, .2, 1);
+
+  /* Cool-air page wash (applied to body) */
+  --air: radial-gradient(125% 78% at 50% -12%, color-mix(in oklab, var(--blue) 44%, transparent) 0%, transparent 60%);
+
+  color-scheme: light;
+}
+
+html[data-theme=dark] {
+  --accent: #8fb2f7;       /* light cornflower for text/lines on dark surfaces */
+  --accent-hover: #aecaff;
+  --blue-strong: #86aec2;  /* on dark, the lighter blue reads fine */
+
+  --toggle-bg: #8fb2f7;
+  --toggle-edge: #5c84d6;
+
+  --ink: #eef3fb;
+  --muted: #a7bbcf;
+  --bg: #0e1a2b;           /* deep cool navy */
+  --surface: #16273c;      /* cool dark card */
+  --soft: #21385a;         /* nudged lighter/cooler than surface so cards lift */
+  --line: #2f4a68;
+  --field-border: #64798f;
+
+  --focus: #86aec2;        /* blue reads well on dark surfaces */
+  --danger-text: #ffac95;
+
+  --shadow-sm: 0 0 0 1px rgba(255, 255, 255, .04), 0 1px 3px rgba(0, 0, 0, .5);
+  --shadow-md: 0 0 0 1px rgba(255, 255, 255, .05), 0 8px 24px -12px rgba(0, 0, 0, .6);
+  --shadow-lg: 0 0 0 1px rgba(255, 255, 255, .06), 0 18px 44px -18px rgba(0, 0, 0, .7);
+
+  --air: radial-gradient(125% 78% at 50% -12%, color-mix(in oklab, var(--blue) 17%, transparent) 0%, transparent 62%);
+
+  color-scheme: dark;
+}

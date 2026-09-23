@@ -1,0 +1,5 @@
+﻿---
+interface Props{items:{title:string;description:string;image:string;alt:string;approved:boolean}[];title:string}
+const {items,title}=Astro.props;const approved=items.filter(i=>i.approved&&i.title.trim()&&i.description.trim()&&i.image&&i.alt);
+---
+{approved.length>0&&<section class="section"><div class="wrap"><div class="section-heading"><h2>{title}</h2></div><div class="service-grid">{approved.map(i=><article class="service-item"><img src={i.image} width="960" height="640" loading="lazy" alt={i.alt}/><h3>{i.title}</h3><p>{i.description}</p></article>)}</div></div></section>}

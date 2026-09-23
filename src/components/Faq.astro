@@ -1,0 +1,6 @@
+﻿---
+interface Props{items:{question:string;answer:string;approved:boolean}[];title:string}
+const {items,title}=Astro.props;const approved=items.filter(i=>i.approved&&i.question.trim()&&i.answer.trim());
+---
+{approved.length>0&&<section class="section"><div class="wrap"><h2>{title}</h2>{approved.map(item=><details class="faq"><summary>{item.question}</summary><p>{item.answer}</p></details>)}</div></section>}
+<style>.faq{border-bottom:1px solid var(--line);padding-block:20px}.faq summary{cursor:pointer;font-weight:500;min-height:44px}.faq p{padding-block:15px;color:var(--muted)}</style>

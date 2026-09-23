@@ -1,0 +1,1 @@
+﻿export const GET=()=>new Response(import.meta.env.PUBLIC_SITE_URL&&import.meta.env.PUBLIC_ALLOW_INDEXING==='true'&&import.meta.env.PUBLIC_CONTENT_APPROVED==='true'?`User-agent: *\nAllow: /\nDisallow: /api/\nSitemap: ${import.meta.env.PUBLIC_SITE_URL.replace(/\/$/,'')}/sitemap.xml\n`:'User-agent: *\nDisallow: /\n',{headers:{'Content-Type':'text/plain; charset=utf-8'}});

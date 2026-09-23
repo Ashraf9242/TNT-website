@@ -1,0 +1,76 @@
+/* Theme toggle — Uiverse.io theme icon by ArturCodeCraft.
+   Recoloured to the TNT palette via --toggle-bg: a warm sun amber in light
+   mode, the cool night blue in dark mode (the original was purple #5856d6). It's a <button> that
+   toggles the theme on click; the morph is a hover flourish. Reset is scoped to
+   .theme__icon (NOT a global button reset). */
+
+.theme__icon {
+  border: 1px solid var(--toggle-edge); padding: 4px; margin: 0; cursor: pointer; font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+  width: 32px; height: 32px; border-radius: 10px;
+  background-color: var(--toggle-bg);
+  position: relative; overflow: hidden;
+}
+.theme__icon:focus-visible { outline: 2px solid var(--focus, #0038a8); outline-offset: 3px; }
+
+/* 1 — centre disc (moon → sun on hover) */
+.theme__icon > :nth-child(1) {
+  width: 16px; height: 16px; border-radius: 24px;
+  border: 3px solid var(--toggle-bg); background-color: rgb(28, 28, 30);
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  transition: width .4s, height .4s, border .4s, background-color .4s; z-index: 10;
+}
+.theme__icon:hover > :nth-child(1) {
+  width: 20px; height: 20px; border: 1px solid rgb(245, 245, 247); background-color: rgb(245, 245, 247);
+}
+
+/* 3 — corner accent dot (hidden at rest, grows on hover) */
+.theme__icon > :nth-child(3) {
+  width: 4px; height: 4px; border-radius: 9px; background-color: var(--toggle-bg);
+  position: absolute; top: 2px; right: 2px;
+  transition: width .6s, height .6s; transition-delay: .08s; z-index: 10;
+}
+.theme__icon:hover > :nth-child(3) { width: 18px; height: 18px; }
+
+/* 2 — the rays */
+.theme__icon > :nth-child(2) {
+  width: 24px; height: 24px; border-radius: 24px;
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  transition: transform .4s;
+}
+.theme__icon:hover > :nth-child(2) { transform: translate(-50%, -50%) rotate(-45deg) scale(.8); }
+.theme__icon > :nth-child(2) span {
+  display: block; width: 24px; height: 2px; border-radius: 2px;
+  background-color: rgb(28, 28, 30); position: relative;
+}
+.theme__icon > :nth-child(2) > :nth-child(1) { top: calc(50% - 1px); }
+.theme__icon > :nth-child(2) > :nth-child(2) { top: calc(50% - 3px); transform: rotate(90deg); }
+.theme__icon > :nth-child(2) > :nth-child(3) { top: calc(50% - 5px); transform: rotate(45deg); }
+.theme__icon > :nth-child(2) > :nth-child(4) { top: calc(50% - 7px); transform: rotate(-45deg); }
+
+/* Dark mode rests as a half moon and reveals the sun on interaction. */
+html[data-theme=dark] .theme__icon > :nth-child(2),
+html[data-theme=dark] .theme__icon > :nth-child(3) { display: none; }
+html[data-theme=dark] .theme__icon > :nth-child(1) {
+  width: 18px;
+  height: 18px;
+  border: 0;
+  background-color: #f7b733;
+  box-shadow: -6px 0 0 var(--toggle-bg);
+}
+html[data-theme=dark] .theme__icon:hover > :nth-child(1),
+html[data-theme=dark] .theme__icon:focus-visible > :nth-child(1) {
+  width: 20px;
+  height: 20px;
+  border: 1px solid rgb(245, 245, 247);
+  background-color: rgb(245, 245, 247);
+  box-shadow: none;
+}
+html[data-theme=dark] .theme__icon:hover > :nth-child(2),
+html[data-theme=dark] .theme__icon:focus-visible > :nth-child(2),
+html[data-theme=dark] .theme__icon:hover > :nth-child(3),
+html[data-theme=dark] .theme__icon:focus-visible > :nth-child(3) { display: block; }
+
+@media (prefers-reduced-motion: reduce) {
+  .theme__icon > *, .theme__icon > :nth-child(2) span { transition: none !important; }
+}

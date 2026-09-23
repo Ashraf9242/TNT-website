@@ -1,0 +1,25 @@
+﻿---
+import {stats} from '../data/content';
+import type {Lang} from '../data/site';
+interface Props{lang:Lang}const {lang}=Astro.props;
+---
+<div class="stats">{stats(lang).map(s=><div class="stat"><strong><bdi>{s.value}</bdi></strong><span>{s.label}</span></div>)}</div>
+<script>
+// Count-up: animates each stat (2018, 100%, 99%, 1000+) from 0 to its
+// value when the block scrolls into view. Prefix/suffix (%, +) and the
+// SSR value are preserved, so no-JS and reduced-motion users see finals.
+const parse=(raw:string)=>{const m=raw.match(/^(\D*)([\d.,]+)(\D*)$/);if(!m)return null;const clean=m[2].replace(/,/g,'');return{pre:m[1],suf:m[3],target:parseFloat(clean),dp:(clean.split('.')[1]||'').length}};
+const items=Array.from(document.querySelectorAll('.stats .stat strong bdi')).map(el=>{const p=parse((el.textContent||'').trim());return p?{el,...p}:null}).filter(Boolean) as Array<{el:Element,pre:string,suf:string,target:number,dp:number}>;
+if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&items.length){
+  items.forEach(it=>{it.el.textContent=it.pre+(0).toFixed(it.dp)+it.suf});
+  const run=(it:{el:Element,pre:string,suf:string,target:number,dp:number})=>{
+    const dur=1600,start=performance.now();
+    const tick=(now:number)=>{const p=Math.min(1,(now-start)/dur),e=1-Math.pow(1-p,3);
+      it.el.textContent=it.pre+(it.target*e).toFixed(it.dp)+it.suf;
+      if(p<1)requestAnimationFrame(tick);else it.el.textContent=it.pre+it.target.toFixed(it.dp)+it.suf};
+    requestAnimationFrame(tick);
+  };
+  const io=new IntersectionObserver((entries,obs)=>entries.forEach(en=>{if(en.isIntersecting){items.filter(it=>en.target.contains(it.el)).forEach(run);obs.unobserve(en.target)}}),{threshold:0.35});
+  document.querySelectorAll('.stats').forEach(s=>io.observe(s));
+}
+</script>

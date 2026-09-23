@@ -1,0 +1,29 @@
+---
+const slides = ['hero-service', 'hero-team', 'technician'];
+---
+<div class="hero-slides" aria-hidden="true">
+  {slides.map((name, index) => (
+    <img class="hero-bg" src={`/images/${name}-960.webp`}
+      srcset={`/images/${name}-480.webp 480w, /images/${name}-960.webp 960w, /images/${name}-1600.webp 1600w`}
+      sizes="100vw" alt="" loading="eager" fetchpriority={index === 0 ? 'high' : 'auto'} decoding="async" />
+  ))}
+</div>
+<style>
+  .hero-slides { position: absolute; inset: 0; z-index: -2; }
+  .hero-slides .hero-bg { z-index: auto; object-position: 50% 57%; }
+  .hero-bg:nth-child(2) { opacity: 0; animation: hero-second 15s ease-in-out infinite; }
+  .hero-bg:nth-child(3) { opacity: 0; object-position: 50% 38%; animation: hero-third 15s ease-in-out infinite; }
+  @keyframes hero-second {
+    0%, 27.777% { opacity: 0; }
+    33.333%, 66.667% { opacity: 1; }
+    66.668%, 100% { opacity: 0; }
+  }
+  @keyframes hero-third {
+    0%, 61.111% { opacity: 0; }
+    66.667%, 94.444% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-bg { animation: none; }
+  }
+</style>

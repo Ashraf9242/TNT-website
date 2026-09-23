@@ -1,0 +1,92 @@
+---
+import '../styles/tokens.css';
+import '../styles/base.css';
+import '../styles/layout.css';
+import '../styles/components.css';
+import '../styles/responsive.css';
+import '../styles/toggle.css';
+import '../styles/themes.css';
+import '@fontsource/ibm-plex-sans-arabic/400.css';
+import '@fontsource/ibm-plex-sans-arabic/500.css';
+import '@fontsource/ibm-plex-sans-arabic/600.css';
+import '@fontsource/ibm-plex-sans/400.css';
+import '@fontsource/ibm-plex-sans/500.css';
+import '@fontsource/ibm-plex-sans/600.css';
+import {contact,href,labels,ui,activeLanguages,type Lang,type Slug} from '../data/site';
+interface Props {lang:Lang;slug:Slug;title:string;description:string}
+const {lang,slug,title,description}=Astro.props;const t=ui[lang];const ar=lang==='ar';
+const base=import.meta.env.PUBLIC_SITE_URL?.replace(/\/$/,'');
+const indexable=Boolean(base&&import.meta.env.PUBLIC_ALLOW_INDEXING==='true'&&import.meta.env.PUBLIC_CONTENT_APPROVED==='true');
+const canonical=base?base+href(lang,slug):undefined;
+const bilingual=activeLanguages.includes('en');
+const nav:Slug[]=['','services','contracts','systems','about','contact'];
+// Mobile drawer: one scannable column + the three service pages grouped under a caption.
+const mobileNav:Slug[]=['','services','contracts','systems','about','clients','pricing','contact'];
+const mobileServices:Slug[]=['installation','maintenance','cleaning'];
+---
+<!doctype html><html lang={lang} dir={ar?'rtl':'ltr'}>
+<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>{title} | TNT</title><meta name="description" content={description}/><meta name="robots" content={indexable?'index, follow':'noindex, nofollow'}/>
+{canonical&&<link rel="canonical" href={canonical}/>}
+{base&&<><link rel="alternate" hreflang="ar" href={base+href('ar',slug)}/>{bilingual&&<link rel="alternate" hreflang="en" href={base+href('en',slug)}/>}<link rel="alternate" hreflang="x-default" href={base+href('ar',slug)}/></>}
+<meta property="og:title" content={`${title} | TNT`}/><meta property="og:description" content={description}/><meta property="og:type" content="website"/><meta property="og:locale" content={ar?'ar_OM':'en_OM'}/>{base&&<><meta property="og:url" content={canonical}/><meta property="og:image" content={base+'/images/headquarters-1600.webp'}/></>}
+<meta name="twitter:card" content="summary_large_image"/><meta name="color-scheme" content="light dark"/>
+<link rel="icon" type="image/jpeg" href="/images/tnt-logo.jpg"/>
+<script is:inline>try{const t=localStorage.getItem('tnt-theme');document.documentElement.dataset.theme=t==='light'||t==='dark'?t:matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}catch{document.documentElement.dataset.theme=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}</script>
+{indexable&&<script is:inline type="application/ld+json" set:html={JSON.stringify({'@context':'https://schema.org','@type':'HVACBusiness',name:ar?'تي ان تي للتكييـــــــف':'TNT',url:base,telephone:contact.tel,email:contact.email,foundingDate:'2018',address:{'@type':'PostalAddress',addressLocality:'Muscat',addressCountry:'OM'}})}/>}
+</head><body>
+<div class="site-weather" aria-hidden="true"><div class="snow-field">{Array.from({length:28}).map((_,i)=><i style={`--flake-left:${i*3.55+1}%;--flake-size:${4+i%3}px;--flake-opacity:${.4+i%4*.08};--flake-duration:${9+i%5*2}s;--flake-delay:${i*-1.15}s`}></i>)}</div><div class="air-field"><i></i><i></i><i></i><i></i></div></div>
+<a class="skip-link" href="#main">{t.skip}</a>
+<header class="site-header"><div class="wrap header-inner">
+<div class="header-brand">
+<a class="brand" href={href(lang)} aria-label={ar?'TNT الرئيسية':'TNT home'}><img src="/images/tnt-logo-dark.png" width="663" height="450" alt="TNT"/></a>
+<p class="header-slogan" lang="en" dir="ltr"><span>Cool Air.</span> <span>Smart Care</span></p>
+</div>
+<nav class="desktop-nav" aria-label={ar?'التنقل الرئيسي':'Main navigation'}><span class="nav-slide" aria-hidden="true"></span>{nav.map(s=><a href={href(lang,s)} aria-current={s===slug?'page':undefined}>{labels[lang][s]}</a>)}</nav>
+<div class="header-actions">{bilingual&&<a class="language" href={href(ar?'en':'ar',slug)} lang={ar?'en':'ar'}>{ar?'EN':'العربية'}</a>}<button class="theme__icon" id="theme-toggle" type="button" aria-label={t.theme} aria-pressed="false" dir="ltr"><div></div><div><span></span><span></span><span></span><span></span></div><div></div></button><button class="icon-button menu-toggle" id="menu-toggle" type="button" aria-label={t.menu} aria-expanded="false" aria-controls="mobile-nav"><span class="menu-icon" aria-hidden="true"><i></i><i></i><i></i></span></button></div>
+</div><nav id="mobile-nav" class="mobile-nav" aria-label={ar?'قائمة الهاتف':'Mobile navigation'} hidden><div class="wrap mobile-nav-inner">
+<ul class="mobile-nav-list">{mobileNav.map(s=><li><a href={href(lang,s)} aria-current={s===slug?'page':undefined}>{labels[lang][s]}<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></a></li>)}</ul>
+<p class="mobile-nav-caption">{ar?'تصفح الخدمات':'Browse services'}</p>
+<div class="mobile-nav-chips">{mobileServices.map(s=><a href={href(lang,s)} aria-current={s===slug?'page':undefined}>{labels[lang][s]}</a>)}</div>
+<div class="mobile-nav-foot"><a dir="ltr" href={`tel:${contact.tel}`}>{contact.phone}</a>{bilingual&&<a href={href(ar?'en':'ar',slug)} lang={ar?'en':'ar'}>{ar?'English':'العربية'}</a>}</div>
+</div></nav></header><div class="nav-backdrop" id="nav-backdrop" hidden></div>
+<main id="main" tabindex="-1"><slot/></main>
+<footer class="footer"><div class="wrap footer-lead"><div><span class="footer-kicker">{ar?'حلول تبريد موثوقة':'TNT AIR CONDITIONING'}</span><h2>{ar?'راحة تدوم، وعناية تعرفها':'Comfort that stays. Care you can trust.'}</h2></div><a class="footer-action" href={href(lang,'contact')}><span>{t.quote}</span><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a></div><div class="wrap footer-grid"><div class="footer-identity"><a class="brand footer-brand" href={href(lang)}><img src="/images/tnt-logo-dark.png" width="663" height="450" alt="TNT" loading="lazy"/></a><p>{ar?'تي ان تي للتكييـــــــف':'Cool Air. Smart Care'}</p><p>{ar?'تأسست في مسقط':'Established in Muscat'} · 2018</p></div><div><h2>{labels[lang].services}</h2>{(['installation','maintenance','cleaning','contracts','systems'] as Slug[]).map(s=><a href={href(lang,s)}>{labels[lang][s]}</a>)}</div><div><h2>{ar?'روابط الموقع':'Explore'}</h2>{(['about','clients','pricing','contact'] as Slug[]).map(s=><a href={href(lang,s)}>{labels[lang][s]}</a>)}</div><div class="footer-contact"><h2>{labels[lang].contact}</h2><p>{ar?'مسقط، سلطنة عُمان':'Muscat, Oman'}</p><div class="social-cluster" aria-label={ar?'وسائل التواصل':'Get in touch'}><div class="social-row"><a class="card card1" href={`https://www.instagram.com/${contact.instagram}/`} target="_blank" rel="noopener noreferrer" aria-label={ar?'إنستغرام':'Instagram'}><svg class="instagram" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.3-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2-.1-1.3-.1-1.7-.1-4.9s0-3.6.1-4.9c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4 1.3-.1 1.7-.1 4.9-.1zm0 1.8c-3.1 0-3.5 0-4.7.1-1.1.1-1.7.2-2.1.4-.5.2-.9.4-1.3.8-.4.4-.6.8-.8 1.3-.2.4-.3 1-.4 2.1-.1 1.2-.1 1.6-.1 4.7s0 3.5.1 4.7c.1 1.1.2 1.7.4 2.1.2.5.4.9.8 1.3.4.4.8.6 1.3.8.4.2 1 .3 2.1.4 1.2.1 1.6.1 4.7.1s3.5 0 4.7-.1c1.1-.1 1.7-.2 2.1-.4.5-.2.9-.4 1.3-.8.4-.4.6-.8.8-1.3.2-.4.3-1 .4-2.1.1-1.2.1-1.6.1-4.7s0-3.5-.1-4.7c-.1-1.1-.2-1.7-.4-2.1-.2-.5-.4-.9-.8-1.3-.4-.4-.8-.6-1.3-.8-.4-.2-1-.3-2.1-.4-1.2-.1-1.6-.1-4.7-.1zm0 3.1a4.9 4.9 0 1 1 0 9.8 4.9 4.9 0 0 1 0-9.8zm0 1.8a3.1 3.1 0 1 0 0 6.2 3.1 3.1 0 0 0 0-6.2zm5.1-.3a1.15 1.15 0 1 1-2.3 0 1.15 1.15 0 0 1 2.3 0z"/></svg></a><a class="card card2" href={"https://www.google.com/maps/search/?api=1&query=TNT+Air+Conditioning+Muscat+Oman"} target="_blank" rel="noopener noreferrer" aria-label={ar?'الموقع':'Location'}><svg class="location" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg></a></div><div class="social-row"><a class="card card3" href={`https://wa.me/${contact.tel.replace(/\D/g,'')}`} target="_blank" rel="noopener noreferrer" aria-label={ar?'واتساب':'WhatsApp'}><svg class="whatsapp" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2zm0 1.8a8.2 8.2 0 0 1 5.8 14 8.2 8.2 0 0 1-10-1.2l-.3-.3-2.9.8.8-2.8-.3-.3A8.2 8.2 0 0 1 12 3.8zm-3.1 4c.1 0 .3 0 .4.4l.7 1.6c.1.2.1.3 0 .5-.1.2-.1.3-.2.5l-.4.5c-.1.1-.2.2-.1.4.1.2.5.9 1 1.5.7.8 1.4 1.2 2.1 1.5.2.1.4.1.5-.1l.6-.8c.2-.2.4-.2.6-.1l1.6.8c.3.1.5.2.5.3.1.1.1.6-.1 1.2-.2.6-1.2 1.1-1.7 1.2-.5.1-.9.2-3-.6-2.5-1-4.1-3.5-4.2-3.7-.1-.2-1-1.4-1-2.6s.6-1.8.9-2.1c.2-.2.5-.3.7-.3z"/></svg></a><a class="card card4" href={`mailto:${contact.email}`} aria-label={ar?'البريد الإلكتروني':'Email'}><svg class="gmail" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4.2-8 5-8-5V6l8 5 8-5v2.2z"/></svg></a></div></div></div></div><div class="wrap footer-bottom"><span>© {new Date().getFullYear()} TNT</span><span>Developed by MD.Ashraf</span><span>Cool Air. Smart Care</span>{bilingual&&<a href={href(ar?'en':'ar',slug)}>{ar?'English':'العربية'} ↗</a>}</div></footer>
+{slug!=='contact'&&<nav class="action-bar" aria-label={ar?'إجراءات سريعة':'Quick actions'}><a class="action-bar-item call" href={`tel:${contact.tel}`}><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.24 11 11 0 0 0 3.5.56 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.3a1 1 0 0 1 1 1 11 11 0 0 0 .56 3.5 1 1 0 0 1-.24 1Z"/></svg>{t.call}</a><a class="action-bar-item quote" href={href(lang,'contact')}><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 5h16v11H7l-3 3z"/></svg>{t.quote}</a></nav>}
+<script>
+const root=document.documentElement;
+const locationCard=document.querySelector('.social-cluster .card2');
+if(locationCard){locationCard.classList.add('location-card');locationCard.removeAttribute('href');locationCard.setAttribute('role','img');locationCard.setAttribute('tabindex','0');}
+const toggle=document.getElementById('theme-toggle');
+// button toggle: aria-pressed reflects dark mode
+function syncToggle(){toggle?.setAttribute('aria-pressed',String(root.dataset.theme==='dark'))}
+syncToggle();
+toggle?.addEventListener('click',()=>{const theme=root.dataset.theme==='dark'?'light':'dark';root.dataset.theme=theme;try{localStorage.setItem('tnt-theme',theme)}catch{}syncToggle()});
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',e=>{try{if(!localStorage.getItem('tnt-theme')){root.dataset.theme=e.matches?'dark':'light';syncToggle()}}catch{}});
+const nav=document.querySelector('.desktop-nav');
+const slide=nav?.querySelector('.nav-slide') as HTMLElement|null;
+if(nav&&slide){
+  const links=Array.from(nav.querySelectorAll('a')) as HTMLElement[];
+  const current=links.find(a=>a.getAttribute('aria-current')==='page')||null;
+  const moveTo=(el:HTMLElement|null)=>{if(!el){slide.style.width='0';return}slide.style.transform=`translateX(${el.offsetLeft}px)`;slide.style.width=`${el.offsetWidth}px`};
+  const reset=()=>moveTo(current);
+  reset();
+  links.forEach(a=>{a.addEventListener('mouseenter',()=>moveTo(a));a.addEventListener('focus',()=>moveTo(a))});
+  nav.addEventListener('mouseleave',reset);
+  nav.addEventListener('focusout',e=>{if(!nav.contains((e as FocusEvent).relatedTarget as Node))reset()});
+  window.addEventListener('resize',reset,{passive:true});
+  document.fonts?.ready.then(reset);
+}
+const header=document.querySelector('.site-header');
+const onScroll=()=>header?.classList.toggle('scrolled',window.scrollY>8);
+onScroll();window.addEventListener('scroll',onScroll,{passive:true});
+const button=document.getElementById('menu-toggle');const menu=document.getElementById('mobile-nav');const backdrop=document.getElementById('nav-backdrop');
+function setMenu(open:boolean){if(menu)menu.hidden=!open;if(backdrop)backdrop.hidden=!open;root.classList.toggle('nav-open',open);button?.setAttribute('aria-expanded',String(open))}
+function closeMenu(){setMenu(false)}
+button?.addEventListener('click',()=>{const open=button.getAttribute('aria-expanded')!=='true';setMenu(open);if(open)(menu?.querySelector('a,button') as HTMLElement|null)?.focus()});
+backdrop?.addEventListener('click',closeMenu);
+menu?.addEventListener('click',e=>{if((e.target as HTMLElement).closest('a'))closeMenu()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&button?.getAttribute('aria-expanded')==='true'){closeMenu();button.focus()}});
+matchMedia('(min-width: 1100px)').addEventListener('change',e=>{if(e.matches)closeMenu()});
+</script>
+</body></html>

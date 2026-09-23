@@ -1,0 +1,5 @@
+﻿---
+import {clients} from '../data/content';
+interface Props{limit?:number; big?:boolean}const {limit=clients.length, big=false}=Astro.props;
+---
+<div class:list={['client-grid', {'client-grid--lg': big}]}>{clients.slice(0,limit).map(([id,name])=><div class="client-logo"><img src={`/images/client-${id}.webp`} width="210" height="110" loading="lazy" alt={name}/></div>)}</div>

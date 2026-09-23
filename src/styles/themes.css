@@ -1,0 +1,11 @@
+/* ============================================================
+   Theme overrides — dark-mode adjustments that can't be expressed
+   as token swaps. (Accent/state colors are handled by the
+   theme-aware tokens --red-accent / --danger-text / --focus in
+   tokens.css, so they no longer need overrides here.)
+   Loaded last so these win at equal specificity.
+   ============================================================ */
+
+/* Brand logo: one logo used in both themes, kept on its white chip
+   (defined in layout.css) so the black lettering stays legible on the
+   dark header — no theme swap. */

@@ -1,0 +1,31 @@
+{
+  "name": "tnt-air-conditioning",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev --host 0.0.0.0",
+    "build": "astro build",
+    "preview": "astro preview --host 0.0.0.0",
+    "check": "astro check",
+    "test": "node --experimental-strip-types --test tests/*.test.ts",
+    "start": "node --env-file=.env dist/server/entry.mjs",
+    "test:site": "node scripts/test-site.mjs",
+    "verify:content": "node scripts/verify-content.mjs"
+  },
+  "dependencies": {
+    "@astrojs/node": "11.1.5",
+    "@fontsource/ibm-plex-sans": "^5.2.0",
+    "@fontsource/ibm-plex-sans-arabic": "^5.2.0",
+    "astro": "7.3.2",
+    "nodemailer": "^10.0.9"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.0",
+    "@axe-core/playwright": "^4.10.0",
+    "@playwright/test": "^1.55.0",
+    "@types/node": "^24.0.0",
+    "@types/nodemailer": "^7.0.0",
+    "typescript": "^5.9.0"
+  }
+}
