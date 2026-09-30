@@ -1,0 +1,173 @@
+---
+// "خدمات للمؤسسات" — building/facility maintenance system. Every CTA opens WhatsApp directly.
+import {whatsappHref, href, type Lang} from '../data/site';
+import {corpWhatsappText, corpHero, corpProblem, corpFlow, corpCost, corpScope, corpCoverage, corpResults, corpTrust, corpRisk, corpHow, corpFaq, corpClosing} from '../data/corporate';
+import WhatsAppIcon from './WhatsAppIcon.astro';
+import RialSign from './RialSign.astro';
+import FaqItem from './FaqItem.astro';
+import AcTypes from './AcTypes.astro';
+interface Props { lang: Lang }
+const {lang} = Astro.props;
+const wa = whatsappHref(corpWhatsappText);
+const sceneIcons: Record<string, string> = {
+  meeting: '<rect x="5" y="2.5" width="14" height="19" rx="2.5"/><path d="M10 18.5h4M9 7.5c1.8-1.4 4.2-1.4 6 0M10.5 10c.9-.6 2.1-.6 3 0"/>',
+  night: '<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"/><path d="M16 3.5v3M14.5 5h3"/>',
+  travel: '<path d="M2.5 16.5 21 9.5c1-.4 1.3-1.8.3-2.3-.6-.3-1.2-.3-1.8 0L14 9.5 7 5.5 5 6.5l4.5 4.5-4 1.8-2.3-1.3-1.2.6 2 3.4Z"/><path d="M3 21h18"/>',
+  search: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.8-4.8M8 10.5h5"/>',
+};
+const check = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>';
+const cross = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg>';
+---
+<div class="corp">
+  <!-- Hero -->
+  <section class="corp-hero">
+    <img class="corp-hero-bg" src="/images/ac/chiller.webp" alt="" aria-hidden="true" width="800" height="600"/>
+    <div class="corp-hero-scrim" aria-hidden="true"></div>
+    <div class="wrap corp-hero-inner">
+      <h2 class="corp-hero-title">{corpHero.title[0]}<br/><span>{corpHero.title[1]}</span></h2>
+      <p class="corp-hero-lead">{corpHero.lead}</p>
+      <ul class="corp-points">{corpHero.points.map(p => <li><Fragment set:html={check}/>{p}</li>)}</ul>
+      <a class="corp-wa" href={wa}><WhatsAppIcon size={26}/>{corpHero.cta}</a>
+      <p class="corp-note">{corpHero.note.map(n => <span>{n}</span>)}</p>
+    </div>
+  </section>
+
+  <!-- Problem -->
+  <section class="section corp-block">
+    <div class="wrap">
+      <header class="corp-head"><span class="corp-kicker">{corpProblem.kicker}</span><h2>{corpProblem.title}</h2>{corpProblem.lead.map(p => <p>{p}</p>)}</header>
+      <ul class="corp-scenes">{corpProblem.scenes.map(s => <li><span class="corp-scene-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" set:html={sceneIcons[s.icon]}/></span><p>{s.text}</p></li>)}</ul>
+      <p class="corp-result">{corpProblem.result}</p>
+    </div>
+  </section>
+
+  <!-- Flow: without vs with -->
+  <section class="section soft corp-block">
+    <div class="wrap">
+      <div class="corp-flow corp-flow--without">
+        <h3>{corpFlow.without.title}</h3>
+        <ol>{corpFlow.without.steps.map(s => <li><span>{s}</span></li>)}</ol>
+      </div>
+      <header class="corp-head corp-head--center"><span class="corp-kicker">{corpFlow.kicker}</span><h2>{corpFlow.headline}</h2>{corpFlow.body.map(p => <p>{p}</p>)}</header>
+      <div class="corp-flow corp-flow--with">
+        <h3>{corpFlow.with.title}</h3>
+        <ol>{corpFlow.with.steps.map(s => <li><span>{s}</span></li>)}</ol>
+      </div>
+      <p class="corp-statement">{corpFlow.statement[0]} <strong>{corpFlow.statement[1]}</strong></p>
+    </div>
+  </section>
+
+  <!-- Cost -->
+  <section class="section corp-block">
+    <div class="wrap">
+      <header class="corp-head corp-head--center"><span class="corp-kicker">{corpCost.kicker}</span><h2>{corpCost.title}</h2><p>{corpCost.lead}</p></header>
+      <div class="corp-cost">
+        <article class="corp-plan">
+          <h3>{corpCost.without.title}</h3>
+          <p class="corp-plan-price"><b dir="ltr">{corpCost.without.price}</b><RialSign lang={lang}/></p>
+          <p class="corp-plan-unit">{corpCost.without.unit}</p>
+          <ul>{corpCost.without.items.map(i => <li><Fragment set:html={cross}/>{i}</li>)}</ul>
+        </article>
+        <article class="corp-plan corp-plan--tnt">
+          <span class="corp-plan-badge">{corpCost.diff}</span>
+          <h3>{corpCost.with.title}</h3>
+          <p class="corp-plan-price"><b dir="ltr">{corpCost.with.price}</b><RialSign lang={lang}/></p>
+          <p class="corp-plan-unit">{corpCost.with.unit}</p>
+          <ul>{corpCost.with.items.map(i => <li><Fragment set:html={check}/>{i}</li>)}</ul>
+        </article>
+      </div>
+      <ul class="corp-benefits">{corpCost.benefits.map(b => <li><Fragment set:html={check}/>{b}</li>)}</ul>
+      <p class="corp-statement">{corpCost.conclusion}</p>
+      <div class="corp-center"><a class="corp-wa" href={wa}><WhatsAppIcon size={24}/>{corpCost.cta}</a></div>
+    </div>
+  </section>
+
+  <!-- Transparency -->
+  <section class="section soft corp-block">
+    <div class="wrap">
+      <header class="corp-head corp-head--center"><span class="corp-kicker">{corpScope.kicker}</span><h2>{corpScope.title}</h2></header>
+      <div class="corp-scope">
+        <div class="corp-scope-card corp-scope-card--in"><h3>{corpScope.included.title}</h3><ul>{corpScope.included.items.map(i => <li><Fragment set:html={check}/>{i}</li>)}</ul></div>
+        <div class="corp-scope-card corp-scope-card--special"><h3>{corpScope.special.title}</h3><ul>{corpScope.special.items.map(i => <li><span aria-hidden="true">٪</span>{i}</li>)}</ul></div>
+      </div>
+      <p class="price-disclaimer corp-disclaimer" role="note"><span aria-hidden="true">!</span>{corpScope.note}</p>
+    </div>
+  </section>
+
+  <!-- Coverage -->
+  <section class="section corp-block">
+    <div class="wrap">
+      <header class="corp-head corp-head--center"><span class="corp-kicker">{corpCoverage.kicker}</span><h2>{corpCoverage.title}</h2></header>
+      <AcTypes compact/>
+      <div class="corp-center"><a class="text-link" href={href(lang, 'systems')}>أنظمة التكييف التي نعمل بها ←</a></div>
+    </div>
+  </section>
+
+  <!-- Before / after -->
+  <section class="section soft corp-block">
+    <div class="wrap">
+      <header class="corp-head corp-head--center"><span class="corp-kicker">{corpResults.kicker}</span><h2>{corpResults.title}</h2><p>{corpResults.lead}</p></header>
+      <figure class="corp-shot corp-shot--single">
+        <img src={`/images/results/${corpResults.single.img}-1200.webp`} srcset={`/images/results/${corpResults.single.img}-640.webp 640w, /images/results/${corpResults.single.img}-1200.webp 1200w`} sizes="(max-width: 767px) 100vw, 1100px" alt={corpResults.single.alt} loading="lazy" width="1200" height="900"/>
+        <span class="corp-tag corp-tag--before">قبل</span><span class="corp-tag corp-tag--after">بعد</span>
+        <figcaption>{corpResults.single.caption}</figcaption>
+      </figure>
+      <div class="corp-pairs">{corpResults.pairs.map(p => <figure class="corp-pair">
+        <div class="corp-pair-imgs">
+          <div class="corp-shot"><img src={`/images/results/${p.before}-640.webp`} srcset={`/images/results/${p.before}-640.webp 640w, /images/results/${p.before}-1200.webp 1200w`} sizes="(max-width: 767px) 50vw, 540px" alt={`${p.alt} قبل`} loading="lazy" width="640" height="480"/><span class="corp-tag corp-tag--before">قبل</span></div>
+          <div class="corp-shot"><img src={`/images/results/${p.after}-640.webp`} srcset={`/images/results/${p.after}-640.webp 640w, /images/results/${p.after}-1200.webp 1200w`} sizes="(max-width: 767px) 50vw, 540px" alt={`${p.alt} بعد`} loading="lazy" width="640" height="480"/><span class="corp-tag corp-tag--after">بعد</span></div>
+        </div>
+        <figcaption>{p.caption}</figcaption>
+      </figure>)}</div>
+    </div>
+  </section>
+
+  <!-- Trust -->
+  <section class="section corp-block">
+    <div class="wrap corp-trust">
+      <div>
+        <span class="corp-kicker">{corpTrust.kicker}</span>
+        <h2>{corpTrust.title}</h2>
+        <p>{corpTrust.lead}</p>
+        <p class="corp-trust-line">{corpTrust.line}</p>
+      </div>
+      <div class="corp-rating">
+        <span class="corp-rating-g" aria-hidden="true">G</span>
+        <p class="corp-rating-value"><b dir="ltr">{corpTrust.rating.value}</b><span dir="ltr">/ 5</span></p>
+        <p class="corp-stars" aria-label="4.8 من 5">★★★★★</p>
+        <p class="corp-rating-count">{corpTrust.rating.count}</p>
+        <p class="corp-rating-note">{corpTrust.rating.note}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Risk + how to start -->
+  <section class="section soft corp-block">
+    <div class="wrap">
+      <header class="corp-head corp-head--center"><span class="corp-kicker">{corpRisk.kicker}</span><h2>{corpRisk.title}</h2><p>{corpRisk.lead}</p></header>
+
+      <h3 class="corp-subhead"><span class="corp-kicker">{corpHow.kicker}</span>{corpHow.title}</h3>
+      <ol class="corp-steps">{corpHow.steps.map(([t, d], i) => <li><span class="corp-step-no" aria-hidden="true">{['١', '٢', '٣', '٤'][i]}</span><h3>{t}</h3><p>{d}</p></li>)}</ol>
+      <div class="corp-center"><a class="corp-wa" href={wa}><WhatsAppIcon size={24}/>{corpHow.cta}</a></div>
+      <p class="corp-statement">{corpRisk.note}</p>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section corp-block">
+    <div class="wrap corp-faq">
+      <header class="corp-head corp-head--center"><span class="corp-kicker">{corpFaq.kicker}</span><h2>{corpFaq.title}</h2></header>
+      <div class="faq-list">{corpFaq.items.map((item, i) => <FaqItem item={item} lang={lang} open={i === 0}/>)}</div>
+    </div>
+  </section>
+
+  <!-- Closing -->
+  <section class="corp-closing">
+    <div class="wrap">
+      <h2>{corpClosing.title}</h2>
+      <p>{corpClosing.lead}</p>
+      <a class="corp-wa corp-wa--xl" href={wa}><WhatsAppIcon size={28}/>{corpClosing.cta}</a>
+      <p class="corp-note">{corpHero.note.map(n => <span>{n}</span>)}<span>{corpClosing.coverage}</span></p>
+    </div>
+  </section>
+</div>

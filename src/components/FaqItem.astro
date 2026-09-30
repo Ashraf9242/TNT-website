@@ -1,0 +1,28 @@
+---
+import {whatsappHref, href, type Lang} from '../data/site';
+import type {FaqItem} from '../data/faq';
+import RialSign from './RialSign.astro';
+interface Props { item: FaqItem; lang: Lang; open?: boolean }
+const {item, lang, open = false} = Astro.props;
+const ask = (q: string) => whatsappHref('السلام عليكم، عندي استفسار بخصوص: ' + q);
+---
+<details class="faq-item" open={open}>
+  <summary>
+    <span class="faq-badge" aria-hidden="true">س</span>
+    <span class="faq-q">{item.q}</span>
+    <span class="faq-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m6 9 6 6 6-6"/></svg></span>
+  </summary>
+  <div class="faq-answer">
+    <span class="faq-badge faq-badge-a" aria-hidden="true">ج</span>
+    <div class="faq-a">
+      {item.a.map(p => <p>{p}</p>)}
+      {item.table && <table class="faq-table"><thead><tr><th scope="col">عدد المكيفات</th><th scope="col">سعر المكيف</th></tr></thead><tbody>{item.table.map(([label, price]) => <tr><td>{label}</td><td><span class="tier-price"><b dir="ltr">{price}</b> <RialSign lang={lang}/></span></td></tr>)}</tbody></table>}
+      {item.list && <ul class="check-list">{item.list.map(li => <li>{li}</li>)}</ul>}
+      {item.after?.map(p => <p>{p}</p>)}
+      {(item.link || item.whatsapp) && <div class="faq-links">
+        {item.link && <a class="faq-link" href={href(lang, item.link.slug)}>{item.link.label} <span aria-hidden="true">←</span></a>}
+        {item.whatsapp && <a class="faq-link faq-link-wa" href={ask(item.q)}>اسألنا على واتساب <span aria-hidden="true">←</span></a>}
+      </div>}
+    </div>
+  </div>
+</details>

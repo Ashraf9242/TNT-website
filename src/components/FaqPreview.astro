@@ -1,0 +1,20 @@
+---
+import {href, type Lang} from '../data/site';
+import {featuredFaqs, faqCount} from '../data/faq';
+import FaqItem from './FaqItem.astro';
+interface Props { lang: Lang }
+const {lang} = Astro.props;
+---
+<section class="faq-preview" aria-labelledby="faq-preview-title">
+  <header class="faq-unit">
+    <span class="faq-unit-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9.5"/><path d="M9.5 9.2a2.6 2.6 0 1 1 3.6 2.4c-.7.3-1.1.9-1.1 1.7v.6M12 17h.01"/></svg></span>
+    <div class="faq-preview-head">
+      <h2 id="faq-preview-title">قبل أن ترسل، قد تجد إجابتك هنا</h2>
+      <p>أكثر الأسئلة التي تصلنا يوميًا، مع إجاباتها.</p>
+    </div>
+    <span class="faq-unit-vent" aria-hidden="true"></span>
+  </header>
+  <div class="faq-list">{featuredFaqs.map(item => <FaqItem item={item} lang={lang}/>)}</div>
+  <a class="faq-preview-all" href={href(lang, 'faq')}>عرض جميع الأسئلة الشائعة ({faqCount}) <span aria-hidden="true">←</span></a>
+</section>
+<div class="faq-preview-divider" role="presentation"><span>لم تجد إجابتك؟ راسلنا مباشرة</span></div>

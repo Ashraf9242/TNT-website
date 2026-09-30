@@ -1,29 +1,45 @@
 ---
-const slides = ['hero-service', 'hero-team', 'technician'];
+// Hero background: photos alternate with muted work clips (cleaning / installation /
+// maintenance) — 6 slides x 3s = 18s cycle. Keep the keyframe % in sync if slides change.
+const slides: {type: 'img' | 'video'; name: string}[] = [
+  {type: 'img', name: 'hero-service'},
+  {type: 'video', name: 'hero-cleaning'},
+  {type: 'img', name: 'hero-team'},
+  {type: 'video', name: 'hero-install'},
+  {type: 'img', name: 'technician'},
+  {type: 'video', name: 'hero-maintenance'},
+];
 ---
 <div class="hero-slides" aria-hidden="true">
-  {slides.map((name, index) => (
-    <img class="hero-bg" src={`/images/${name}-960.webp`}
-      srcset={`/images/${name}-480.webp 480w, /images/${name}-960.webp 960w, /images/${name}-1600.webp 1600w`}
-      sizes="100vw" alt="" loading="eager" fetchpriority={index === 0 ? 'high' : 'auto'} decoding="async" />
-  ))}
+  {slides.map((s, index) => s.type === 'img'
+    ? <img class="hero-bg" style={`--i:${index}`} src={`/images/${s.name}-960.webp`}
+        srcset={`/images/${s.name}-480.webp 480w, /images/${s.name}-960.webp 960w, /images/${s.name}-1600.webp 1600w`}
+        sizes="100vw" alt="" loading="eager" fetchpriority={index === 0 ? 'high' : 'auto'} decoding="async" />
+    : <video class="hero-bg hero-video" style={`--i:${index}`} autoplay muted loop playsinline preload="metadata" poster={`/videos/${s.name}.jpg`}><source src={`/videos/${s.name}.mp4`} type="video/mp4"/></video>
+  )}
 </div>
+<script>
+  const heroVideos = document.querySelectorAll<HTMLVideoElement>('.hero-video');
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) heroVideos.forEach(v => v.pause());
+  // Rewind each clip as its slide fades in, so every pass shows the chosen opening shot.
+  else heroVideos.forEach(v => {
+    const rewind = () => { v.currentTime = 0; v.play().catch(() => {}); };
+    v.addEventListener('animationstart', rewind);
+    v.addEventListener('animationiteration', rewind);
+  });
+</script>
 <style>
   .hero-slides { position: absolute; inset: 0; z-index: -2; }
-  .hero-slides .hero-bg { z-index: auto; object-position: 50% 57%; }
-  .hero-bg:nth-child(2) { opacity: 0; animation: hero-second 15s ease-in-out infinite; }
-  .hero-bg:nth-child(3) { opacity: 0; object-position: 50% 38%; animation: hero-third 15s ease-in-out infinite; }
-  @keyframes hero-second {
-    0%, 27.777% { opacity: 0; }
-    33.333%, 66.667% { opacity: 1; }
-    66.668%, 100% { opacity: 0; }
-  }
-  @keyframes hero-third {
-    0%, 61.111% { opacity: 0; }
-    66.667%, 94.444% { opacity: 1; }
-    100% { opacity: 0; }
+  .hero-slides .hero-bg { z-index: auto; object-position: 50% 57%; opacity: 0; animation: hero-cycle 18s ease-in-out infinite; animation-delay: calc(var(--i) * 3s - .6s); }
+  .hero-slides .hero-bg:first-child { opacity: 1; }
+  .hero-slides .hero-bg:nth-child(5) { object-position: 50% 38%; }
+  .hero-video { width: 100%; height: 100%; object-fit: cover; }
+  @keyframes hero-cycle {
+    0% { opacity: 0; }
+    3.333%, 16.667% { opacity: 1; }
+    20%, 100% { opacity: 0; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .hero-bg { animation: none; }
+    .hero-slides .hero-bg { animation: none; }
   }
 </style>

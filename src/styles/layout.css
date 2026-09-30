@@ -203,7 +203,7 @@ html.nav-open .site-header { background-color: var(--surface); }
 /* ---- Mobile drawer ----------------------------------------------------
    Overlay panel anchored under the sticky header (absolute, because the
    header's backdrop-filter makes it the containing block for fixed kids).
-   One scannable column; the CTAs live in the sticky .action-bar instead. */
+   One scannable column; the WhatsApp CTA sits in the nav footer. */
 .mobile-nav {
   position: absolute;
   top: 100%;
@@ -275,10 +275,7 @@ html.nav-open .site-header { background-color: var(--surface); }
 .nav-backdrop:not([hidden]) { display: block; animation: fade-in var(--dur) var(--ease-out); }
 @keyframes fade-in { from { opacity: 0; } }
 html.nav-open, html.nav-open body { overflow: hidden; }
-html.nav-open .action-bar { display: none; }
 
-/* Sticky mobile action bar (Call + Quote) — enabled at <=1099px in responsive.css */
-.action-bar { display: none; }
 
 /* Skip link */
 .skip-link {

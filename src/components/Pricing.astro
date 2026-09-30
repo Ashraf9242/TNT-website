@@ -1,0 +1,81 @@
+---
+import {whatsappHref, type Lang} from '../data/site';
+import RialSign from './RialSign.astro';
+import WhatsAppIcon from './WhatsAppIcon.astro';
+import {cleaningPrices, cleaningScope, repairPrices, type Tier} from '../data/content';
+interface Props { lang: Lang }
+const {lang} = Astro.props;
+const ar = lang === 'ar';
+const i = ar ? 0 : 1;
+const tierLabel: Record<Tier['tier'], string> = ar
+  ? {regular: 'تنظيف اعتيادي', pro: 'تنظيف احترافي', from: 'يبدأ من'}
+  : {regular: 'Regular clean', pro: 'Professional clean', from: 'Starting from'};
+const ask = (subject: string) => whatsappHref((ar ? 'السلام عليكم، أرغب في الاستفسار عن سعر ' : 'Hello, I would like to ask about the price of ') + subject);
+---
+<div class="pricing">
+  <section class="pricing-group" aria-labelledby="price-cleaning">
+    <header class="pricing-head">
+      <span class="pricing-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v20M4.9 6.5l14.2 11M4.9 17.5l14.2-11"/><path d="m9 3.5 3 2 3-2M9 20.5l3-2 3 2"/></svg></span>
+      <div><h2 id="price-cleaning">{ar ? 'تنظيف المكيفات' : 'AC cleaning'}</h2><p>{ar ? 'اختر نوع مكيفك لمعرفة السعر.' : 'Find your AC type to see the price.'}</p></div>
+    </header>
+    <div class="price-cards">
+      {cleaningPrices.map(c => <article class="price-card">
+        <h3>{c.unit[i]}</h3>
+        <ul class="price-tiers">
+          {c.tiers.map(t => <li class={`tier-${t.tier}`}>
+            <span class="tier-name">{tierLabel[t.tier]}</span>
+            <span class="tier-price"><b dir="ltr">{t.price}</b> <RialSign lang={lang}/></span>
+          </li>)}
+        </ul>
+        {c.note && <p class="price-note"><span aria-hidden="true">!</span>{c.note[i]}</p>}
+      </article>)}
+    </div>
+
+    <div class="scope-compare">
+      <div class="scope-card">
+        <div class="scope-head"><h3>{ar ? 'التنظيف الاعتيادي' : 'Regular cleaning'}</h3><p>{ar ? 'تنظيف دوري سريع يشمل:' : 'A quick routine clean covering:'}</p></div>
+        <ul class="check-list">{cleaningScope.regular.map(s => <li>{s[i]}</li>)}</ul>
+      </div>
+      <div class="scope-card scope-pro">
+        <span class="scope-badge">{ar ? 'الأشمل' : 'Most thorough'}</span>
+        <div class="scope-head"><h3>{ar ? 'التنظيف الاحترافي' : 'Professional cleaning'}</h3><p>{ar ? 'تنظيف عميق للوحدة الداخلية والخارجية يشمل:' : 'A deep clean of indoor and outdoor units covering:'}</p></div>
+        <ul class="check-list">{cleaningScope.pro.map(s => <li>{s[i]}</li>)}</ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="pricing-group" aria-labelledby="price-install">
+    <header class="pricing-head">
+      <span class="pricing-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="8" rx="1.5"/><path d="M7 10h10M8 16v3M12 16v4M16 16v3"/></svg></span>
+      <div><h2 id="price-install">{ar ? 'التركيب' : 'Installation'}</h2><p>{ar ? 'السعر يختلف حسب نوع المكيف وموقع التركيب.' : 'Price depends on the AC type and installation site.'}</p></div>
+    </header>
+    <div class="install-stack">
+      <article class="price-card">
+        <h3>{ar ? 'الأنابيب النحاسية' : 'Copper piping'}</h3>
+        <ul class="price-tiers">
+          <li class="tier-from"><span class="tier-name">{tierLabel.from}</span><span class="tier-price"><b dir="ltr">6.5</b> <RialSign lang={lang}/> <small>{ar ? '/ للمتر' : '/ metre'}</small></span></li>
+        </ul>
+      </article>
+      <a class="install-wa" href={whatsappHref(ar ? 'السلام عليكم، أرغب في طلب عرض سعر لتركيب مكيف' : 'Hello, I would like a quote for installing an AC')}>
+        <WhatsAppIcon size={30}/>
+        <span><strong>{ar ? 'تركيب المكيف' : 'AC installation'}</strong><small>{ar ? 'اطلب عرض سعر لمكيفك عبر واتساب' : 'Request a quote for your AC on WhatsApp'}</small></span>
+        <span class="install-wa-arrow" aria-hidden="true">←</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="pricing-group" aria-labelledby="price-repair">
+    <header class="pricing-head">
+      <span class="pricing-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.2L3 17.8V21h3.2l6.3-6.3a4 4 0 0 0 5.2-5.4l-2.6 2.6-2.5-.5-.5-2.5z"/></svg></span>
+      <div><h2 id="price-repair">{ar ? 'الصيانة والإصلاح' : 'Maintenance & repairs'}</h2><p>{ar ? 'أسعار تقديرية لأكثر الأعطال شيوعًا.' : 'Estimated prices for the most common faults.'}</p></div>
+    </header>
+    <ul class="repair-list">
+      {repairPrices(lang).map(r => <li><span dir="auto">{r.service}</span><span class="tier-price"><b dir="ltr">{r.price}</b> <RialSign lang={lang}/></span></li>)}
+    </ul>
+    <p class="price-disclaimer" role="note">
+      <span aria-hidden="true">!</span>
+      {ar ? 'جميع أسعار خدمات الصيانة تقديرية وتخضع للفحص الفني. بعد المعاينة يتم تحديد السعر والاتفاق عليه، وفي حال الموافقة نباشر العمل مباشرة.' : 'All maintenance prices are estimates and subject to a technical inspection. After inspection we agree the final price with you, and start work once you approve.'}
+    </p>
+  </section>
+
+</div>

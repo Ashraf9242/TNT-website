@@ -1,0 +1,25 @@
+---
+// Muted, looping clip that behaves like a GIF: plays while on screen, pauses off screen.
+// Reduced-motion users get the poster + controls instead of autoplay.
+interface Props { name: string; label: string; wide?: boolean }
+const {name, label, wide = false} = Astro.props;
+---
+<figure class:list={['auto-video', {'auto-video--wide': wide}]}>
+  <video data-autoplay muted loop playsinline preload="none" poster={`/videos/${name}.jpg`} aria-label={label}>
+    <source src={`/videos/${name}.mp4`} type="video/mp4"/>
+  </video>
+  <figcaption>{label}</figcaption>
+</figure>
+
+<script>
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const videos = document.querySelectorAll<HTMLVideoElement>('video[data-autoplay]');
+  if (reduce) videos.forEach(v => { v.controls = true; });
+  else if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(entries => entries.forEach(e => {
+      const v = e.target as HTMLVideoElement;
+      if (e.isIntersecting) { v.preload = 'auto'; v.play().catch(() => {}); } else v.pause();
+    }), {threshold: .35});
+    videos.forEach(v => io.observe(v));
+  }
+</script>

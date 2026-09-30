@@ -8,3 +8,8 @@ dist/
 test-results/
 playwright-report/
 .vercel
+
+# Client source material (converted copies live in public/)
+New pages/
+svg/
+svg.zip

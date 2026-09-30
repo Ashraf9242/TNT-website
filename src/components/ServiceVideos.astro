@@ -1,0 +1,17 @@
+---
+import AutoVideo from './AutoVideo.astro';
+import type {Lang} from '../data/site';
+interface Props { slug: string; lang: Lang }
+const {slug} = Astro.props;
+// Service page clips (from "New pages" shoot, re-encoded muted for web in public/videos).
+const clips: Record<string, {name: string; label: string; wide?: boolean}[]> = {
+  installation: [{name: 'installation-split', label: 'تركيب مكيف سبليت'}],
+  maintenance: [{name: 'maintenance-1', label: 'صيانة الوحدة الخارجية'}, {name: 'maintenance-2', label: 'فحص الضاغط والأنابيب'}, {name: 'maintenance-3', label: 'فحص اللوحة والأسلاك'}],
+  cleaning: [{name: 'hero-cleaning', label: 'تنظيف الوحدة الداخلية بالمواد الكيميائية', wide: true}, {name: 'cleaning-cassette', label: 'تنظيف مكيفات الكاسيت'}],
+};
+const list = clips[slug] ?? [];
+---
+{list.length > 0 && <div class="subsection service-videos">
+  <div class="section-heading"><div><h2>شاهد فريقنا أثناء العمل</h2></div></div>
+  <div class:list={['video-grid', `video-grid--${list.length}`]}>{list.map(c => <AutoVideo {...c}/>)}</div>
+</div>}

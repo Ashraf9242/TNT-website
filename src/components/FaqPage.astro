@@ -1,0 +1,75 @@
+---
+import {whatsappHref, href, labels, type Lang} from '../data/site';
+import {faqGroups} from '../data/faq';
+import FaqItem from './FaqItem.astro';
+import WhatsAppIcon from './WhatsAppIcon.astro';
+interface Props { lang: Lang }
+const {lang} = Astro.props;
+const total = faqGroups.reduce((n, g) => n + g.items.length, 0);
+const icons = {
+  unit: '<rect x="2.5" y="5" width="19" height="9" rx="2"/><path d="M6 11h12M7 17.5c0 1.2 1 1.2 1 2.4M12 17c0 1.4 1 1.4 1 2.8M17 17.5c0 1.2-1 1.2-1 2.4"/>',
+  clean: '<path d="M12 2v20M4.9 6.5l14.2 11M4.9 17.5l14.2-11"/><path d="m9 3.5 3 2 3-2M9 20.5l3-2 3 2"/>',
+  price: '<path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8Z"/><circle cx="7.5" cy="7.5" r="1.5"/>',
+  calendar: '<rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4M8 14h3"/>',
+  building: '<path d="M4 21V4.5A1.5 1.5 0 0 1 5.5 3h8A1.5 1.5 0 0 1 15 4.5V21M15 9h3.5A1.5 1.5 0 0 1 20 10.5V21M2.5 21h19M8 7h3M8 11h3M8 15h3"/>',
+} as const;
+---
+<div class="faq-page">
+  <div class="faq-tools">
+    <label class="faq-search">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <span class="visually-hidden">ابحث في الأسئلة</span>
+      <input id="faq-search" type="search" placeholder={`ابحث بين ${total} سؤالًا… مثل: تقطير، خصم، ضمان`} autocomplete="off"/>
+    </label>
+    <nav class="faq-chips" aria-label="أقسام الأسئلة">
+      {faqGroups.map(g => <a href={`#${g.id}`}><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" set:html={icons[g.icon]}/>{g.title}</a>)}
+    </nav>
+  </div>
+
+  <p class="faq-empty" id="faq-empty" hidden>لم نجد سؤالًا مطابقًا. <a href={whatsappHref('السلام عليكم، عندي استفسار')}>اسألنا مباشرة على واتساب</a></p>
+
+  {faqGroups.map((g, gi) => <section class="faq-group" id={g.id} aria-labelledby={`${g.id}-title`}>
+    <header class="faq-unit">
+      <span class="faq-unit-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" set:html={icons[g.icon]}/></span>
+      <h2 id={`${g.id}-title`}>{g.title}</h2>
+      <span class="faq-unit-display" aria-label={`${g.items.length} أسئلة`}><b dir="ltr">{String(g.items.length).padStart(2, '0')}</b><small>سؤال</small></span>
+      <span class="faq-unit-vent" aria-hidden="true"></span>
+    </header>
+    <div class="faq-list">
+      {g.items.map((item, ii) => <FaqItem item={item} lang={lang} open={gi === 0 && ii === 0}/>)}
+    </div>
+  </section>)}
+
+  <aside class="faq-cta">
+    <div class="faq-unit-vent" aria-hidden="true"></div>
+    <h2>لم تجد إجابة سؤالك؟</h2>
+    <a class="whatsapp-button" href={whatsappHref('السلام عليكم، عندي استفسار')}>
+      <WhatsAppIcon size={24}/>
+      اسألنا على واتساب
+    </a>
+    <a class="faq-cta-link" href={href(lang, 'pricing')}>{labels[lang].pricing} ←</a>
+  </aside>
+</div>
+
+<script>
+  // Live filter: hides non-matching questions and empty groups; opens matches.
+  const input = document.getElementById('faq-search') as HTMLInputElement | null;
+  const empty = document.getElementById('faq-empty');
+  const norm = (s: string) => s.toLowerCase().replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').replace(/[ً-ْ]/g, '');
+  input?.addEventListener('input', () => {
+    const q = norm(input.value.trim());
+    let shown = 0;
+    document.querySelectorAll<HTMLElement>('.faq-group').forEach(group => {
+      let groupShown = 0;
+      group.querySelectorAll<HTMLDetailsElement>('.faq-item').forEach(item => {
+        const hit = !q || norm(item.textContent || '').includes(q);
+        item.hidden = !hit;
+        if (q) item.open = hit;
+        if (hit) groupShown++;
+      });
+      group.hidden = groupShown === 0;
+      shown += groupShown;
+    });
+    if (empty) empty.hidden = shown > 0;
+  });
+</script>
