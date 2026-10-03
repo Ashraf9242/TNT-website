@@ -26,10 +26,10 @@ export const processSteps: Record<Lang, {title:string; text:string}[]> = {
  en: [
   {title:'Request a quote', text:'Message us on WhatsApp with the service you need.'},
   {title:'Site visit', text:'We assess the site and scope your needs.'},
-  {title:'Clear quote', text:'A detailed, transparent quote — no hidden fees.'},
+  {title:'Clear quote', text:'A detailed, transparent quote with no hidden fees.'},
   {title:'Execution & follow-up', text:'We deliver the work and follow up after handover.'}
  ]
 };
 
-// English content is retained privately; only Arabic is currently enabled.
-export const activeLanguages: Lang[] = ['ar'];
+// Both languages are live: Arabic (RTL) and English (LTR, mirrored layout).
+export const activeLanguages: Lang[] = ['ar', 'en'];

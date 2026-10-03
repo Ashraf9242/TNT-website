@@ -4,24 +4,26 @@ import type {FaqItem} from '../data/faq';
 import RialSign from './RialSign.astro';
 interface Props { item: FaqItem; lang: Lang; open?: boolean }
 const {item, lang, open = false} = Astro.props;
-const ask = (q: string) => whatsappHref('السلام عليكم، عندي استفسار بخصوص: ' + q);
+const ar = lang === 'ar';
+const ask = (q: string) => whatsappHref((ar ? 'السلام عليكم، عندي استفسار بخصوص: ' : 'Hello, I have a question about: ') + q);
+const arrow = ar ? '←' : '→';
 ---
 <details class="faq-item" open={open}>
   <summary>
-    <span class="faq-badge" aria-hidden="true">س</span>
+    <span class="faq-badge" aria-hidden="true">{ar ? 'س' : 'Q'}</span>
     <span class="faq-q">{item.q}</span>
     <span class="faq-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m6 9 6 6 6-6"/></svg></span>
   </summary>
   <div class="faq-answer">
-    <span class="faq-badge faq-badge-a" aria-hidden="true">ج</span>
+    <span class="faq-badge faq-badge-a" aria-hidden="true">{ar ? 'ج' : 'A'}</span>
     <div class="faq-a">
       {item.a.map(p => <p>{p}</p>)}
-      {item.table && <table class="faq-table"><thead><tr><th scope="col">عدد المكيفات</th><th scope="col">سعر المكيف</th></tr></thead><tbody>{item.table.map(([label, price]) => <tr><td>{label}</td><td><span class="tier-price"><b dir="ltr">{price}</b> <RialSign lang={lang}/></span></td></tr>)}</tbody></table>}
+      {item.table && <table class="faq-table"><thead><tr><th scope="col">{ar ? 'عدد المكيفات' : 'Number of ACs'}</th><th scope="col">{ar ? 'سعر المكيف' : 'Price per AC'}</th></tr></thead><tbody>{item.table.map(([label, price]) => <tr><td>{label}</td><td><span class="tier-price"><b dir="ltr">{price}</b> <RialSign lang={lang}/></span></td></tr>)}</tbody></table>}
       {item.list && <ul class="check-list">{item.list.map(li => <li>{li}</li>)}</ul>}
       {item.after?.map(p => <p>{p}</p>)}
       {(item.link || item.whatsapp) && <div class="faq-links">
-        {item.link && <a class="faq-link" href={href(lang, item.link.slug)}>{item.link.label} <span aria-hidden="true">←</span></a>}
-        {item.whatsapp && <a class="faq-link faq-link-wa" href={ask(item.q)}>اسألنا على واتساب <span aria-hidden="true">←</span></a>}
+        {item.link && <a class="faq-link" href={href(lang, item.link.slug)}>{item.link.label} <span aria-hidden="true">{arrow}</span></a>}
+        {item.whatsapp && <a class="faq-link faq-link-wa" href={ask(item.q)}>{ar ? 'اسألنا على واتساب' : 'Ask us on WhatsApp'} <span aria-hidden="true">{arrow}</span></a>}
       </div>}
     </div>
   </div>

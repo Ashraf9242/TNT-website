@@ -5,7 +5,10 @@ import FaqItem from './FaqItem.astro';
 import WhatsAppIcon from './WhatsAppIcon.astro';
 interface Props { lang: Lang }
 const {lang} = Astro.props;
-const total = faqGroups.reduce((n, g) => n + g.items.length, 0);
+const ar = lang === 'ar';
+const groups = faqGroups(lang);
+const hello = ar ? 'السلام عليكم، عندي استفسار' : 'Hello, I have a question';
+const total = groups.reduce((n, g) => n + g.items.length, 0);
 const icons = {
   unit: '<rect x="2.5" y="5" width="19" height="9" rx="2"/><path d="M6 11h12M7 17.5c0 1.2 1 1.2 1 2.4M12 17c0 1.4 1 1.4 1 2.8M17 17.5c0 1.2-1 1.2-1 2.4"/>',
   clean: '<path d="M12 2v20M4.9 6.5l14.2 11M4.9 17.5l14.2-11"/><path d="m9 3.5 3 2 3-2M9 20.5l3-2 3 2"/>',
@@ -18,21 +21,21 @@ const icons = {
   <div class="faq-tools">
     <label class="faq-search">
       <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-      <span class="visually-hidden">ابحث في الأسئلة</span>
-      <input id="faq-search" type="search" placeholder={`ابحث بين ${total} سؤالًا… مثل: تقطير، خصم، ضمان`} autocomplete="off"/>
+      <span class="visually-hidden">{ar ? 'ابحث في الأسئلة' : 'Search the questions'}</span>
+      <input id="faq-search" type="search" placeholder={ar ? `ابحث بين ${total} سؤالًا… مثل: تقطير، خصم، ضمان` : `Search ${total} questions… e.g. dripping, discount, warranty`} autocomplete="off"/>
     </label>
-    <nav class="faq-chips" aria-label="أقسام الأسئلة">
-      {faqGroups.map(g => <a href={`#${g.id}`}><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" set:html={icons[g.icon]}/>{g.title}</a>)}
+    <nav class="faq-chips" aria-label={ar ? 'أقسام الأسئلة' : 'Question categories'}>
+      {groups.map(g => <a href={`#${g.id}`}><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" set:html={icons[g.icon]}/>{g.title}</a>)}
     </nav>
   </div>
 
-  <p class="faq-empty" id="faq-empty" hidden>لم نجد سؤالًا مطابقًا. <a href={whatsappHref('السلام عليكم، عندي استفسار')}>اسألنا مباشرة على واتساب</a></p>
+  <p class="faq-empty" id="faq-empty" hidden>{ar ? 'لم نجد سؤالًا مطابقًا.' : 'No matching question found.'} <a href={whatsappHref(hello)}>{ar ? 'اسألنا مباشرة على واتساب' : 'Ask us directly on WhatsApp'}</a></p>
 
-  {faqGroups.map((g, gi) => <section class="faq-group" id={g.id} aria-labelledby={`${g.id}-title`}>
+  {groups.map((g, gi) => <section class="faq-group" id={g.id} aria-labelledby={`${g.id}-title`}>
     <header class="faq-unit">
       <span class="faq-unit-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" set:html={icons[g.icon]}/></span>
       <h2 id={`${g.id}-title`}>{g.title}</h2>
-      <span class="faq-unit-display" aria-label={`${g.items.length} أسئلة`}><b dir="ltr">{String(g.items.length).padStart(2, '0')}</b><small>سؤال</small></span>
+      <span class="faq-unit-display" aria-label={ar ? `${g.items.length} أسئلة` : `${g.items.length} questions`}><b dir="ltr">{String(g.items.length).padStart(2, '0')}</b><small>{ar ? 'سؤال' : 'Qs'}</small></span>
       <span class="faq-unit-vent" aria-hidden="true"></span>
     </header>
     <div class="faq-list">
@@ -42,12 +45,12 @@ const icons = {
 
   <aside class="faq-cta">
     <div class="faq-unit-vent" aria-hidden="true"></div>
-    <h2>لم تجد إجابة سؤالك؟</h2>
-    <a class="whatsapp-button" href={whatsappHref('السلام عليكم، عندي استفسار')}>
+    <h2>{ar ? 'لم تجد إجابة سؤالك؟' : 'Did not find your answer?'}</h2>
+    <a class="whatsapp-button" href={whatsappHref(hello)}>
       <WhatsAppIcon size={24}/>
-      اسألنا على واتساب
+      {ar ? 'اسألنا على واتساب' : 'Ask us on WhatsApp'}
     </a>
-    <a class="faq-cta-link" href={href(lang, 'pricing')}>{labels[lang].pricing} ←</a>
+    <a class="faq-cta-link" href={href(lang, 'pricing')}>{labels[lang].pricing} {ar ? '←' : '→'}</a>
   </aside>
 </div>
 

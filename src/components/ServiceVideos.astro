@@ -2,16 +2,17 @@
 import AutoVideo from './AutoVideo.astro';
 import type {Lang} from '../data/site';
 interface Props { slug: string; lang: Lang }
-const {slug} = Astro.props;
+const {slug, lang} = Astro.props;
+const ar = lang === 'ar';
 // Service page clips (from "New pages" shoot, re-encoded muted for web in public/videos).
-const clips: Record<string, {name: string; label: string; wide?: boolean}[]> = {
-  installation: [{name: 'installation-split', label: 'تركيب مكيف سبليت'}],
-  maintenance: [{name: 'maintenance-1', label: 'صيانة الوحدة الخارجية'}, {name: 'maintenance-2', label: 'فحص الضاغط والأنابيب'}, {name: 'maintenance-3', label: 'فحص اللوحة والأسلاك'}],
-  cleaning: [{name: 'hero-cleaning', label: 'تنظيف الوحدة الداخلية بالمواد الكيميائية', wide: true}, {name: 'cleaning-cassette', label: 'تنظيف مكيفات الكاسيت'}],
+const clips: Record<string, {name: string; label: [string, string]; wide?: boolean}[]> = {
+  installation: [{name: 'installation-split', label: ['تركيب مكيف سبليت', 'Installing a split AC']}],
+  maintenance: [{name: 'maintenance-1', label: ['صيانة الوحدة الخارجية', 'Servicing the outdoor unit']}, {name: 'maintenance-2', label: ['فحص الضاغط والأنابيب', 'Checking the compressor and pipes']}, {name: 'maintenance-3', label: ['فحص اللوحة والأسلاك', 'Checking the board and wiring']}],
+  cleaning: [{name: 'hero-cleaning', label: ['تنظيف الوحدة الداخلية بالمواد الكيميائية', 'Chemical cleaning of the indoor unit'], wide: true}, {name: 'cleaning-cassette', label: ['تنظيف مكيفات الكاسيت', 'Cleaning cassette ACs']}],
 };
 const list = clips[slug] ?? [];
 ---
 {list.length > 0 && <div class="subsection service-videos">
-  <div class="section-heading"><div><h2>شاهد فريقنا أثناء العمل</h2></div></div>
-  <div class:list={['video-grid', `video-grid--${list.length}`]}>{list.map(c => <AutoVideo {...c}/>)}</div>
+  <div class="section-heading"><div><h2>{ar ? 'شاهد فريقنا أثناء العمل' : 'Watch our team at work'}</h2></div></div>
+  <div class:list={['video-grid', `video-grid--${list.length}`]}>{list.map(c => <AutoVideo name={c.name} label={c.label[ar ? 0 : 1]} wide={c.wide}/>)}</div>
 </div>}
