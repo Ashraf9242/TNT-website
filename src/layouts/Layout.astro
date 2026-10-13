@@ -13,11 +13,16 @@ import '@fontsource/ibm-plex-sans/400.css';
 import '@fontsource/ibm-plex-sans/500.css';
 import '@fontsource/ibm-plex-sans/600.css';
 import {contact,whatsappHref,href,labels,ui,activeLanguages,type Lang,type Slug} from '../data/site';
-interface Props {lang:Lang;slug:Slug;title:string;description:string}
-const {lang,slug,title,description}=Astro.props;const t=ui[lang];const ar=lang==='ar';
+import {pageSeo,jsonLd} from '../data/seo';
+interface Props {lang:Lang;slug:Slug;title:string;description:string;image?:string;notFound?:boolean}
+const {lang,slug,title,description,image='headquarters-1600.webp',notFound=false}=Astro.props;const t=ui[lang];const ar=lang==='ar';
+const seo=notFound?undefined:pageSeo[lang][slug];
+const docTitle=seo?.title??`${title} | TNT`;const metaDescription=seo?.description??description;
 const base=import.meta.env.PUBLIC_SITE_URL?.replace(/\/$/,'');
-const indexable=Boolean(base&&import.meta.env.PUBLIC_ALLOW_INDEXING==='true'&&import.meta.env.PUBLIC_CONTENT_APPROVED==='true');
-const canonical=base?base+href(lang,slug):undefined;
+const indexable=!notFound&&Boolean(base&&import.meta.env.PUBLIC_ALLOW_INDEXING==='true'&&import.meta.env.PUBLIC_CONTENT_APPROVED==='true');
+const canonical=base&&!notFound?base+href(lang,slug):undefined;
+const ogImage=base?`${base}/images/${image}`:undefined;
+const gaId=import.meta.env.PUBLIC_GA_ID;const gscToken=import.meta.env.PUBLIC_GSC_VERIFICATION;
 const bilingual=activeLanguages.includes('en');
 const nav:Slug[]=['','services','contracts','systems','about','contact'];
 // Mobile drawer: one scannable column + the three service pages grouped under a caption.
@@ -26,14 +31,16 @@ const mobileServices:Slug[]=['installation','maintenance','cleaning'];
 ---
 <!doctype html><html lang={lang} dir={ar?'rtl':'ltr'}>
 <head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>{title} | TNT</title><meta name="description" content={description}/><meta name="robots" content={indexable?'index, follow':'noindex, nofollow'}/>
+<title>{docTitle}</title><meta name="description" content={metaDescription}/><meta name="robots" content={indexable?'index, follow, max-image-preview:large':'noindex, nofollow'}/>
+{gscToken&&<meta name="google-site-verification" content={gscToken}/>}
 {canonical&&<link rel="canonical" href={canonical}/>}
-{base&&<><link rel="alternate" hreflang="ar" href={base+href('ar',slug)}/>{bilingual&&<link rel="alternate" hreflang="en" href={base+href('en',slug)}/>}<link rel="alternate" hreflang="x-default" href={base+href('ar',slug)}/></>}
-<meta property="og:title" content={`${title} | TNT`}/><meta property="og:description" content={description}/><meta property="og:type" content="website"/><meta property="og:locale" content={ar?'ar_OM':'en_OM'}/>{base&&<><meta property="og:url" content={canonical}/><meta property="og:image" content={base+'/images/headquarters-1600.webp'}/></>}
-<meta name="twitter:card" content="summary_large_image"/><meta name="color-scheme" content="light dark"/>
+{canonical&&<><link rel="alternate" hreflang="ar" href={base+href('ar',slug)}/>{bilingual&&<link rel="alternate" hreflang="en" href={base+href('en',slug)}/>}<link rel="alternate" hreflang="x-default" href={base+href('ar',slug)}/></>}
+<meta property="og:site_name" content={ar?'تي ان تي للتكييف':'TNT Air Conditioning'}/><meta property="og:title" content={docTitle}/><meta property="og:description" content={metaDescription}/><meta property="og:type" content="website"/><meta property="og:locale" content={ar?'ar_OM':'en_OM'}/>{bilingual&&<meta property="og:locale:alternate" content={ar?'en_OM':'ar_OM'}/>}{canonical&&<meta property="og:url" content={canonical}/>}{ogImage&&<><meta property="og:image" content={ogImage}/><meta property="og:image:alt" content={docTitle}/><meta name="twitter:image" content={ogImage}/></>}
+<meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content={docTitle}/><meta name="twitter:description" content={metaDescription}/><meta name="geo.region" content="OM-MA"/><meta name="geo.placename" content={ar?'مسقط':'Muscat'}/><meta name="color-scheme" content="light dark"/>
 <link rel="icon" type="image/jpeg" href="/images/tnt-logo.jpg"/>
 <script is:inline>try{const t=localStorage.getItem('tnt-theme');document.documentElement.dataset.theme=t==='light'||t==='dark'?t:matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}catch{document.documentElement.dataset.theme=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}</script>
-{indexable&&<script is:inline type="application/ld+json" set:html={JSON.stringify({'@context':'https://schema.org','@type':'HVACBusiness',name:ar?'تي ان تي للتكييـــــــف':'TNT',url:base,telephone:contact.tel,email:contact.email,foundingDate:'2018',address:{'@type':'PostalAddress',addressLocality:'Muscat',addressCountry:'OM'}})}/>}
+{canonical&&<script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd(lang,slug,base!)).replace(/</g,'\\u003c')}/>}
+{indexable&&gaId&&<><script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}></script><script is:inline define:vars={{gaId}}>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config',gaId);document.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('a[href*="wa.me"],a[href^="tel:"]');if(a)gtag('event','generate_lead',{method:a.href.includes('wa.me')?'whatsapp':'phone'})})</script></>}
 </head><body data-page={slug || 'home'}>
 <div class="site-weather" aria-hidden="true"><div class="snow-field">{Array.from({length:28}).map((_,i)=><i style={`--flake-left:${i*3.55+1}%;--flake-size:${4+i%3}px;--flake-opacity:${.4+i%4*.08};--flake-duration:${9+i%5*2}s;--flake-delay:${i*-1.15}s`}></i>)}</div><div class="air-field"><i></i><i></i><i></i><i></i></div></div>
 <a class="skip-link" href="#main">{t.skip}</a>

@@ -13,3 +13,6 @@ playwright-report/
 New pages/
 svg/
 svg.zip
+
+.vercel
+.env*
