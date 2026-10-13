@@ -14,15 +14,15 @@ import '@fontsource/ibm-plex-sans/500.css';
 import '@fontsource/ibm-plex-sans/600.css';
 import {contact,whatsappHref,href,labels,ui,activeLanguages,type Lang,type Slug} from '../data/site';
 import {pageSeo,jsonLd} from '../data/seo';
+import {siteUrl,indexingEnabled,gaId,gscToken} from '../lib/env';
 interface Props {lang:Lang;slug:Slug;title:string;description:string;image?:string;notFound?:boolean}
 const {lang,slug,title,description,image='headquarters-1600.webp',notFound=false}=Astro.props;const t=ui[lang];const ar=lang==='ar';
 const seo=notFound?undefined:pageSeo[lang][slug];
 const docTitle=seo?.title??`${title} | TNT`;const metaDescription=seo?.description??description;
-const base=import.meta.env.PUBLIC_SITE_URL?.replace(/\/$/,'');
-const indexable=!notFound&&Boolean(base&&import.meta.env.PUBLIC_ALLOW_INDEXING==='true'&&import.meta.env.PUBLIC_CONTENT_APPROVED==='true');
+const base=siteUrl;
+const indexable=!notFound&&indexingEnabled;
 const canonical=base&&!notFound?base+href(lang,slug):undefined;
 const ogImage=base?`${base}/images/${image}`:undefined;
-const gaId=import.meta.env.PUBLIC_GA_ID;const gscToken=import.meta.env.PUBLIC_GSC_VERIFICATION;
 const bilingual=activeLanguages.includes('en');
 const nav:Slug[]=['','services','contracts','systems','about','contact'];
 // Mobile drawer: one scannable column + the three service pages grouped under a caption.
