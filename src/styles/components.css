@@ -563,10 +563,10 @@ html[data-theme=dark] .why-item:focus-within span { color: var(--bg); }
   background-size: contain;
   transition: transform .2s ease-in-out;
 }
-.social-cluster .card1::after { background-image: url('/images/instagram.png'); }
-.social-cluster .card2::after { background-image: url('/images/location.png'); }
-.social-cluster .card3::after { background-image: url('/images/social.png'); }
-.social-cluster .card4::after { background-image: url('/images/gmail.png'); }
+.social-cluster .card1::after { background-image: url('/images/instagram.webp'); }
+.social-cluster .card2::after { background-image: url('/images/location.webp'); }
+.social-cluster .card3::after { background-image: url('/images/social.webp'); }
+.social-cluster .card4::after { background-image: url('/images/gmail.webp'); }
 .social-cluster .card1:hover { background-color: #cc39a4; }
 .social-cluster .card2:hover { background-color: #1877f2; }
 .social-cluster .card3:hover { background-color: #25d366; }

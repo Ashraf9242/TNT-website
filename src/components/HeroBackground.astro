@@ -9,24 +9,36 @@ const slides: {type: 'img' | 'video'; name: string}[] = [
   {type: 'img', name: 'technician'},
   {type: 'video', name: 'hero-maintenance'},
 ];
+const srcset = (name: string) => `/images/${name}-480.webp 480w, /images/${name}-720.webp 720w, /images/${name}-960.webp 960w, /images/${name}-1600.webp 1600w`;
 ---
 <div class="hero-slides" aria-hidden="true">
   {slides.map((s, index) => s.type === 'img'
-    ? <img class="hero-bg" style={`--i:${index}`} src={`/images/${s.name}-960.webp`}
-        srcset={`/images/${s.name}-480.webp 480w, /images/${s.name}-960.webp 960w, /images/${s.name}-1600.webp 1600w`}
-        sizes="100vw" alt="" loading="eager" fetchpriority={index === 0 ? 'high' : 'auto'} decoding="async" />
-    : <video class="hero-bg hero-video" style={`--i:${index}`} autoplay muted loop playsinline preload="metadata" poster={`/videos/${s.name}.jpg`}><source src={`/videos/${s.name}.mp4`} type="video/mp4"/></video>
+    ? (index === 0
+      ? <img class="hero-bg" style={`--i:${index}`} src={`/images/${s.name}-960.webp`} srcset={srcset(s.name)}
+          sizes="100vw" alt="" loading="eager" fetchpriority="high" decoding="async" />
+      : <img class="hero-bg" style={`--i:${index}`} data-srcset={srcset(s.name)} sizes="100vw" alt="" decoding="async" />)
+    : <video class="hero-bg hero-video" style={`--i:${index}`} muted loop playsinline preload="none" data-poster={`/videos/${s.name}.jpg`} data-src={`/videos/${s.name}.mp4`}></video>
   )}
 </div>
 <script>
+  // Only the first slide loads up front (it is the LCP image). The other photos and the clips
+  // load after the page has finished loading, well before their 3s turn in the cycle.
   const heroVideos = document.querySelectorAll<HTMLVideoElement>('.hero-video');
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches) heroVideos.forEach(v => v.pause());
-  // Rewind each clip as its slide fades in, so every pass shows the chosen opening shot.
-  else heroVideos.forEach(v => {
-    const rewind = () => { v.currentTime = 0; v.play().catch(() => {}); };
-    v.addEventListener('animationstart', rewind);
-    v.addEventListener('animationiteration', rewind);
-  });
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const loadRest = () => {
+    document.querySelectorAll<HTMLImageElement>('.hero-slides img[data-srcset]').forEach(img => { img.srcset = img.dataset.srcset!; });
+    heroVideos.forEach(v => {
+      v.poster = v.dataset.poster!;
+      if (still) return;
+      v.src = v.dataset.src!;
+      // Rewind each clip as its slide fades in, so every pass shows the chosen opening shot.
+      const rewind = () => { v.currentTime = 0; v.play().catch(() => {}); };
+      v.addEventListener('animationstart', rewind);
+      v.addEventListener('animationiteration', rewind);
+      rewind();
+    });
+  };
+  if (document.readyState === 'complete') loadRest(); else addEventListener('load', loadRest, {once: true});
 </script>
 <style>
   .hero-slides { position: absolute; inset: 0; z-index: -2; }

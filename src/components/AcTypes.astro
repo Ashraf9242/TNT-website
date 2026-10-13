@@ -7,7 +7,7 @@ const {lang, compact = false} = Astro.props;
 ---
 <ul class:list={['ac-types', {'ac-types--compact': compact}]}>
   {acTypes(lang).map((t, i) => <li class="ac-type">
-    <img src={`/images/ac/${t.key}.webp`} width="800" height="600" loading="lazy" decoding="async" alt={t.name}/>
+    <img src={`/images/ac/${t.key}-400.webp`} srcset={`/images/ac/${t.key}-400.webp 400w, /images/ac/${t.key}.webp 800w`} sizes="(max-width: 767px) 50vw, 25vw" width="800" height="600" loading="lazy" decoding="async" alt={t.name}/>
     <span class="ac-type-name">{!compact && <b dir="ltr">{String(i + 1).padStart(2, '0')}</b>}{compact ? t.short : t.name}</span>
   </li>)}
 </ul>
