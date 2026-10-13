@@ -6,6 +6,7 @@
 // Titles/descriptions are new copy written for search, PENDING CLIENT APPROVAL. No em dashes (client rule).
 import {contact,href,labels,type Lang,type Slug} from './site';
 import {faqGroups} from './faq';
+import {guides,guideHref} from './guides';
 
 export const pageSeo: Record<Lang, Record<Slug, {title:string; description:string}>> = {
  ar: {
@@ -20,6 +21,8 @@ export const pageSeo: Record<Lang, Record<Slug, {title:string; description:strin
   clients: {title:'عملاؤنا: جهات حكومية وبنوك وشركات في عُمان | TNT', description:'جهات حكومية وبنوك وشركات كبرى في سلطنة عُمان تثق بتي ان تي للتكييف في صيانة وتشغيل أنظمة التكييف. تعرّف على بعض عملائنا.'},
   pricing: {title:'أسعار تنظيف وصيانة المكيفات في مسقط | TNT', description:'أسعار واضحة بالريال العُماني لتنظيف المكيفات حسب النوع، وتركيب المكيفات وأنابيب النحاس، وإصلاح الأعطال الشائعة في مسقط. بدون تكاليف خفية.'},
   faq: {title:'أسئلة شائعة عن صيانة وتنظيف المكيفات | TNT مسقط', description:'إجابات عن أكثر الأسئلة حول المكيفات: أفضل مكيف، تقطير المكيف، تعبئة الغاز، الأسعار، الحجز ونطاق الخدمة في مسقط وبركاء.'},
+  areas: {title:'صيانة وتنظيف مكيفات في مسقط وبركاء: مناطق خدمتنا | TNT', description:'نخدم جميع ولايات محافظة مسقط: مسقط، مطرح، بوشر، السيب، العامرات، قريات، وولاية بركاء. فرق متنقلة لتركيب وصيانة وتنظيف المكيفات في موقعك.'},
+  guides: {title:'دليل العناية بالمكيف: نصائح الصيانة والتنظيف | TNT', description:'مقالات عملية عن المكيفات في عُمان: لماذا لا يبرد المكيف، كم مرة تنظفه، أسباب التقطير، سبليت أم دكت، ومعلومات خاطئة شائعة.'},
   contact: {title:'تواصل معنا: اطلب عرض سعر للتكييف في مسقط | TNT', description:'تواصل مع تي ان تي للتكييف عبر واتساب 97790973 أو أرسل طلبك من هنا. نخدم محافظة مسقط وبركاء، ومقرنا في مدينة سندان الصناعية.'}
  },
  en: {
@@ -34,6 +37,8 @@ export const pageSeo: Record<Lang, Record<Slug, {title:string; description:strin
   clients: {title:'Our Clients: Government, Banks & Companies in Oman | TNT', description:'Government bodies, banks and major companies in Oman trust TNT Air Conditioning to maintain and run their AC systems. Meet some of our clients.'},
   pricing: {title:'AC Cleaning & Repair Prices in Muscat (OMR) | TNT', description:'Clear prices in Omani rials for AC cleaning by unit type, AC installation and copper piping, and common AC repairs in Muscat. No hidden costs.'},
   faq: {title:'AC Maintenance & Cleaning FAQ, Muscat | TNT', description:'Answers to common AC questions: the best AC, water leaks, gas top-ups, prices, booking and our service area in Muscat and Barka.'},
+  areas: {title:'AC Service Areas: Muscat, Seeb, Bawshar & Barka | TNT', description:'We cover every wilayat of Muscat Governorate (Muscat, Muttrah, Bawshar, Seeb, Al Amerat, Qurayyat) and Barka, with mobile AC teams that come to you.'},
+  guides: {title:'AC Care Guides: Maintenance & Cleaning Tips | TNT', description:'Practical AC guides for Oman: why an AC stops cooling, how often to clean it, why it drips, split vs ducted, and common AC myths.'},
   contact: {title:'Contact TNT: Get an AC Service Quote in Muscat', description:'Reach TNT Air Conditioning on WhatsApp +968 9779 0973 or send your request here. We serve Muscat Governorate and Barka from Sandan Industrial City.'}
  }
 };
@@ -43,11 +48,12 @@ const serviceSlugs: Slug[] = ['installation','maintenance','cleaning','contracts
 const flat = (s:string) => s.replace(/\s+/g,' ').trim();
 
 /** JSON-LD @graph for a page. `base` is the absolute site origin (no trailing slash). */
-export function jsonLd(lang:Lang, slug:Slug, base:string){
+export type PageMeta = {path:string; title:string; description:string; image?:string; date?:string};
+export function jsonLd(lang:Lang, slug:Slug, base:string, page?:PageMeta){
  const ar = lang==='ar';
- const url = base + href(lang,slug);
+ const url = base + href(lang,page?.path??slug);
  const biz = base + '/#business';
- const seo = pageSeo[lang][slug];
+ const seo = page ?? pageSeo[lang][slug];
  const graph: Record<string,unknown>[] = [
   {
    '@type':'HVACBusiness', '@id':biz,
@@ -64,14 +70,20 @@ export function jsonLd(lang:Lang, slug:Slug, base:string){
   {'@type':'WebPage', '@id':url+'#webpage', url, name:seo.title, description:seo.description, inLanguage:lang, isPartOf:{'@id':base+'/#website'}, about:{'@id':biz}}
  ];
  if(slug){
-  graph.push({'@type':'BreadcrumbList', itemListElement:[
-   {'@type':'ListItem', position:1, name:labels[lang][''], item:base+href(lang)},
-   {'@type':'ListItem', position:2, name:labels[lang][slug], item:url}
-  ]});
+  const crumbs = [{name:labels[lang][''], item:base+href(lang)}, {name:labels[lang][slug], item:base+href(lang,slug)}];
+  if(page) crumbs.push({name:page.title.split(' | ')[0], item:url});
+  graph.push({'@type':'BreadcrumbList', itemListElement:crumbs.map((c,i)=>({'@type':'ListItem', position:i+1, ...c}))});
  }
  if(serviceSlugs.includes(slug)){
   graph.push({'@type':'Service', name:labels[lang][slug], serviceType: seo.title.split(' | ')[0], description:seo.description, url, provider:{'@id':biz},
    areaServed:[{'@type':'AdministrativeArea', name: ar?'محافظة مسقط':'Muscat Governorate'},{'@type':'City', name: ar?'بركاء':'Barka'}]});
+ }
+ if(page?.date){
+  graph.push({'@type':'BlogPosting', headline:page.title.split(' | ')[0], description:page.description, url, mainEntityOfPage:url, inLanguage:lang,
+   datePublished:page.date, dateModified:page.date, image: page.image?base+'/images/'+page.image:undefined, author:{'@id':biz}, publisher:{'@id':biz}});
+ }
+ if(slug==='guides'&&!page){
+  graph.push({'@type':'ItemList', itemListElement: guides.map((g,i)=>({'@type':'ListItem', position:i+1, url:base+guideHref(lang,g.slug), name:g[lang].title}))});
  }
  if(slug==='faq'){
   graph.push({'@type':'FAQPage', mainEntity: faqGroups(lang).flatMap(g=>g.items).map(i=>({

@@ -1,11 +1,11 @@
 export const contact = { email: 'tntacservices@gmail.com', phone: '+968 9779 0973', tel: '+96897790973', instagram: 'tnt_ac_services' };
 export const whatsappHref = (message = '') => `https://wa.me/${contact.tel.replace(/\D/g, '')}${message ? '?text=' + encodeURIComponent(message) : ''}`;
-export const slugs = ['', 'about', 'services', 'installation', 'maintenance', 'cleaning', 'contracts', 'systems', 'clients', 'pricing', 'faq', 'contact'] as const;
+export const slugs = ['', 'about', 'services', 'installation', 'maintenance', 'cleaning', 'contracts', 'systems', 'clients', 'pricing', 'faq', 'areas', 'guides', 'contact'] as const;
 export type Slug = typeof slugs[number];
 export type Lang = 'ar' | 'en';
 export const labels: Record<Lang, Record<Slug, string>> = {
- ar: { '':'الرئيسية',about:'من نحن',services:'خدماتنا',installation:'التركيب',maintenance:'الصيانة',cleaning:'التنظيف',contracts:'خدمات للمؤسسات',systems:'أنظمة التكييف',clients:'عملاؤنا',pricing:'أسعار الخدمات',faq:'الأسئلة الشائعة',contact:'تواصل معنا'},
- en: { '':'Home',about:'About us',services:'Our services',installation:'Installation',maintenance:'Maintenance',cleaning:'Cleaning',contracts:'Business services',systems:'AC systems',clients:'Our clients',pricing:'Service pricing',faq:'FAQ',contact:'Contact us'}
+ ar: { '':'الرئيسية',about:'من نحن',services:'خدماتنا',installation:'التركيب',maintenance:'الصيانة',cleaning:'التنظيف',contracts:'خدمات للمؤسسات',systems:'أنظمة التكييف',clients:'عملاؤنا',pricing:'أسعار الخدمات',faq:'الأسئلة الشائعة',areas:'مناطق خدمتنا',guides:'دليل العناية بالمكيف',contact:'تواصل معنا'},
+ en: { '':'Home',about:'About us',services:'Our services',installation:'Installation',maintenance:'Maintenance',cleaning:'Cleaning',contracts:'Business services',systems:'AC systems',clients:'Our clients',pricing:'Service pricing',faq:'FAQ',areas:'Service areas',guides:'AC care guides',contact:'Contact us'}
 };
 export const href = (lang:Lang, slug:string='') => `/${lang}${slug ? '/'+slug : ''}`;
 export const ui = {

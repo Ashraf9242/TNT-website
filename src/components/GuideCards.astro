@@ -1,0 +1,17 @@
+---
+// Linked cards for AC care guides (guides index, service pages, FAQ, articles).
+import type {Guide} from '../data/guides';
+import {guideHref} from '../data/guides';
+import type {Lang} from '../data/site';
+interface Props {lang: Lang; items: Guide[]; heading?: string}
+const {lang, items, heading} = Astro.props;
+---
+{items.length > 0 && <div class="subsection guide-cards-block">
+  {heading && <h2>{heading}</h2>}
+  <ul class="guide-cards">
+    {items.map(g => <li><a class="guide-card" href={guideHref(lang, g.slug)}>
+      <img src={`/images/${g.image}-480.webp`} width="480" height="320" alt="" loading="lazy" decoding="async"/>
+      <span class="guide-card-body"><strong>{g[lang].title}</strong><span>{g[lang].description}</span></span>
+    </a></li>)}
+  </ul>
+</div>}
